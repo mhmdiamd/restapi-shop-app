@@ -1,56 +1,56 @@
 import HttpException from '../utils/Errors/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
-import SellerModel from './seller.model.js';
+import BuyerModel from './buyer.model.js';
 
-class SellerController {
-  #sellerModel = new SellerModel();
+class BuyerController {
+  #buyerModel = new BuyerModel();
 
-  // Get all Seller
-  getAllSeller = async (req, res, next) => {
+  // Get all Buyer
+  getAllBuyer = async (req, res, next) => {
     try {
-      const sellers = await this.#sellerModel.getAllSeller();
+      const sellers = await this.#buyerModel.getAllBuyer();
       successResponse(res, 200, 'Get all Sellers success!', sellers);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
   };
 
-  // Get Seller By Id
-  getSellerById = async (req, res, next) => {
+  // Get Buyer By Id
+  getBuyerById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const seller = await this.#sellerModel.getSellerById(id);
-      successResponse(res, 200, `Get seller with ID ${id} success!`, seller);
+      const buyer = await this.#buyerModel.getBuyerById(id);
+      successResponse(res, 200, `Get buyer with ID ${id} success!`, buyer);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
   };
 
-  // Delete Seller
-  deleteSellerById = async (req, res, next) => {
+  // Delete Buyer
+  deleteBuyerById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      await this.#sellerModel.deleteSellerById(id);
+      await this.#buyerModel.deleteBuyerById(id);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
-        message: 'Seller Deleted',
+        message: 'Buyer Deleted',
       });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
   };
 
-  // Update Seller By Id
-  updateSellerById = async (req, res, next) => {
+  // Update Buyer By Id
+  updateBuyerById = async (req, res, next) => {
     const { id } = req.params;
     const data = req.body;
     try {
-      await this.#sellerModel.updateSellerById(id, data);
+      await this.#buyerModel.updateBuyerById(id, data);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
-        message: 'Seller Updated',
+        message: 'Buyer Updated',
       });
     } catch (err) {
       next(new HttpException(err.status, err.message));
@@ -58,4 +58,4 @@ class SellerController {
   };
 }
 
-export default SellerController;
+export default BuyerController;

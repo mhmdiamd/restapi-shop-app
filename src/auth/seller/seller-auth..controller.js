@@ -1,13 +1,19 @@
 import HttpException from '../../utils/Errors/http.exceptions.js';
-import { registerSchema } from '../auth.validation.js';
 import SellerModel from './seller-auth.model.js';
+import bcrypt from 'bcryptjs';
 
 class SellerAuthController {
   #sellerModel = new SellerModel();
 
   // User Register
   register = async (req, res, next) => {
-    const user = req.user;
+    const userPassword = req.user.password;
+
+    // Hasing password
+    var salt = bcrypt.genSaltSync(10);
+    var password = bcrypt.hashSync(userPassword, salt);
+
+    const user = { ...req.user, password };
     try {
       const newSeller = await this.#sellerModel.register(user);
       res.status(200).json({

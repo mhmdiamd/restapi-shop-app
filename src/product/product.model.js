@@ -27,7 +27,7 @@ class ProductModel {
 
     // Error if Product id not found!
     if (products.rowCount == 0) {
-      throw new HttpException(404, `Categories not found!`);
+      throw new HttpException(404, `Products not found!`);
     }
 
     const pagination = (products.rowCount * (limit || 10)) / (limit || 10);
@@ -66,7 +66,10 @@ class ProductModel {
 
   // DeleteProduct
   deleteProductById = async (id) => {
-    const getProduct = await this.getProductById(id);
+    // Check product is not found!
+    await this.getProductById(id);
+
+    // Query when product was found!
     const query = `DELETE FROM products WHERE id_product = ${id}`;
     const deletedProduct = await this.#productRepository.query(query);
 

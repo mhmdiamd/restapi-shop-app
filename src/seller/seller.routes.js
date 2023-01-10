@@ -20,10 +20,10 @@ class SellerRouter extends SellerController {
     this.router.get(`${this.path}/:id`, this.getSellerById);
 
     // Delete User Router
-    this.router.delete(`${this.path}/:id`, this.deleteUserById);
+    this.router.delete(`${this.path}/:id`, this.deleteSellerById);
 
     // Update User Router
-    this.router.put(`${this.path}/:id`, this.updateUserById);
+    this.router.put(`${this.path}/:id`, this.updateSellerById);
   }
 }
 

@@ -1,14 +1,14 @@
-import ProductModel from '../Models/product.model.js';
 import HttpException from '../utils/Errors/http.exceptions.js';
+import ChartModel from './chart.model.js';
 
-class ProductController {
-  #productModel = new ProductModel();
+class ChartController {
+  #chartModel = new ChartModel();
 
   // Get all Product
   getAllProduct = async (req, res, next) => {
     const filter = req.query;
     try {
-      const products = await this.#productModel.getAllProduct(filter);
+      const products = await this.#chartModel.getAllProduct(filter);
       const { data, ...other } = products;
       res.status(200).send({
         status: 'success',
@@ -25,7 +25,7 @@ class ProductController {
   getProductById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const products = await this.#productModel.getProductById(id);
+      const products = await this.#chartModel.getProductById(id);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
@@ -39,7 +39,7 @@ class ProductController {
   // Create Product
   createProduct = async (req, res, next) => {
     try {
-      const createProduct = await this.#productModel.createProduct(req.body);
+     await this.#chartModel.createProduct(req.body);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
@@ -54,7 +54,7 @@ class ProductController {
   deleteProductById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const product = await this.#productModel.deleteProductById(id);
+      await this.#chartModel.deleteProductById(id);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
@@ -70,7 +70,7 @@ class ProductController {
     const { id } = req.params;
     const data = req.body;
     try {
-      const productUpdated = await this.#productModel.updateProductById(id, data);
+      await this.#chartModel.updateProductById(id, data);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
@@ -82,4 +82,4 @@ class ProductController {
   };
 }
 
-export default ProductController;
+export default ChartController;

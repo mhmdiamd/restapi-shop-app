@@ -1,7 +1,7 @@
 import { dbRepo } from '../../Config/db.config.js';
 import HttpException from '../utils/Errors/http.exceptions.js';
 
-class ProductModel {
+class ChartModel {
   #productRepository = dbRepo;
 
   // Get All Products Service
@@ -26,7 +26,7 @@ class ProductModel {
       throw new HttpException(404, `Categories not found!`);
     }
 
-    const pagination = (products.rowCount * (limit || 10)) / (limit || 10);
+    // const pagination = (products.rowCount * (limit || 10)) / (limit || 10);
 
     return {
       data: products.rows,
@@ -60,7 +60,7 @@ class ProductModel {
 
   // DeleteProduct
   deleteProductById = async (id) => {
-    const getProduct = await this.getProductById(id);
+    await this.getProductById(id);
     const query = `DELETE FROM products WHERE id_products = ${id}`;
     const deletedProduct = await this.#productRepository.query(query);
 
@@ -69,7 +69,7 @@ class ProductModel {
 
   // Update Product By Id
   updateProductById = async (id, data) => {
-    const getProduct = await this.getProductById(id);
+ await this.getProductById(id);
 
     const { name_products, price, color, size, stock, description } = data;
     const query = `UPDATE products SET name_products='${name_products}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}' WHERE id_products = '${id}'`;
@@ -79,4 +79,4 @@ class ProductModel {
   };
 }
 
-export default ProductModel;
+export default ChartModel;

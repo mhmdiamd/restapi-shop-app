@@ -11,8 +11,6 @@ export async function registerSchema(req, res, next) {
     password: Joi.string().min(3).required(),
   });
 
-  console.log(req.body);
-
   await schema
     .validateAsync(req.body)
     .then((res) => {

@@ -5,7 +5,7 @@ class SellerModel {
 
   // Auth Register
   register = async ({ name, email, password }) => {
-    const query = `INSERT INTO sellers VALUES(DEFAULT, '${name}', '${email}', '${password}', 'seller')`;
+    const query = `INSERT INTO sellers VALUES(DEFAULT, '${name}', '${email}', '${password}', 'seller', null, null, null, null, 'photodefault.jpg')`;
     const userRegister = await this.#authRepository.query(query);
     return userRegister.rows;
   };

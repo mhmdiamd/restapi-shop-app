@@ -6,7 +6,7 @@ class SellerModel {
 
   // Get All Sellers Service
   getAllSeller = async () => {
-    let query = 'SELECT id_seller, name, phone, email, address gender, birth_date, role FROM sellers';
+    let query = 'SELECT id_seller, name, phone, email, address gender, birth_date, role, photo FROM sellers';
     const sellers = await this.#DB.query(query);
 
     // Error if sellers id not found!
@@ -23,15 +23,15 @@ class SellerModel {
 
     const seller = await this.#DB.query(query);
     if (seller.rowCount == 0) {
-      throw new HttpException(404, `Products with ID ${id} is not found!`);
+      throw new HttpException(404, `Seller with ID ${id} is not found!`);
     }
 
     return seller.rows[0];
   };
 
   // Delete User
-  deleteUserById = async (id) => {
-    const getUser = await this.getSellerById(id);
+  deleteSellerById = async (id) => {
+    await this.getSellerById(id);
     const query = `DELETE FROM sellers WHERE id_seller = ${id}`;
     const deletedUsers = await this.#DB.query(query);
 
@@ -39,11 +39,11 @@ class SellerModel {
   };
 
   // Update Sellers by Id
-  updateUserById = async (id, data) => {
-    const getUser = await this.getSellerById(id);
+  updateSellerById = async (id, data) => {
+    await this.getSellerById(id);
 
-    const { name, email, age, alamat, photo } = data;
-    const query = `UPDATE sellers SET name='${name}', email='${email}', age=${age}, alamat='${alamat}', photo='${photo}' WHERE id_seller = '${id}'`;
+    const { name, gender, phone, birth_date, address, photo } = data;
+    const query = `UPDATE sellers SET name='${name}', phone='${phone}', birth_date='${birth_date}', gender='${gender}', address='${address}', photo='${photo}' WHERE id_seller = '${id}'`;
     const updatedUser = await this.#DB.query(query);
 
     return updatedUser.rows;

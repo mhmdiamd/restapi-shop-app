@@ -5,9 +5,9 @@ class BuyerModel {
 
   // Auth Register
   register = async ({ name, email, password }) => {
-    const query = `INSERT INTO buyers VALUES(DEFAULT, '${name}',null, '${email}', '${password}', null, null, null, null, 'buyer')`;
-    const userRegister = await this.#buyerRepository.query(query);
-    return userRegister.rows;
+    const query = `INSERT INTO buyers VALUES(DEFAULT, '${name}', '${email}', '${password}', 'buyer', null, null, null, null, 'photodefault.jpg')`;
+    const buyerRegister = await this.#buyerRepository.query(query);
+    return buyerRegister.rows;
   };
 }
 
