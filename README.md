@@ -1,6 +1,6 @@
 #shop-app-pijarcamp
 
-###Instalation
+###Instalations
 `$npm insall or npm update`
 
 ###Runing
