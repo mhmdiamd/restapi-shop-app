@@ -1,5 +1,6 @@
 import ProductModel from './product.model.js';
 import HttpException from '../utils/Errors/http.exceptions.js';
+import { successResponse } from './../utils/Helpers/response.js';
 
 class ProductController {
   #productModel = new ProductModel();
@@ -10,12 +11,9 @@ class ProductController {
     try {
       const products = await this.#productModel.getAllProduct(filter);
       const { data, ...other } = products;
-      res.status(200).send({
-        status: 'success',
-        statusCode: 200,
-        data,
-        ...other,
-      });
+
+      // Success Response
+      successResponse(res, 200, 'Success get all Product!', { data, pagination: other });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -25,12 +23,10 @@ class ProductController {
   getProductById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const products = await this.#productModel.getProductById(id);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 200,
-        data: products,
-      });
+      const product = await this.#productModel.getProductById(id);
+
+      // Success Response
+      successResponse(res, 200, 'Success get all Product!', product);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -38,14 +34,11 @@ class ProductController {
 
   // Create Product
   createProduct = async (req, res, next) => {
-    console.log(req.body);
     try {
       const createProduct = await this.#productModel.createProduct(req.body);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 200,
-        messgae: 'Product was created!',
-      });
+
+      // Success Response
+      successResponse(res, 200, 'Success created Product!', { message: 'Product was created!' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -56,11 +49,9 @@ class ProductController {
     const { id } = req.params;
     try {
       const product = await this.#productModel.deleteProductById(id);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 200,
-        message: 'Product Deleted',
-      });
+
+      // Success Response
+      successResponse(res, 200, 'Success created Product!', { message: 'Product Deleted' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -72,11 +63,7 @@ class ProductController {
     const data = req.body;
     try {
       const productUpdated = await this.#productModel.updateProductById(id, data);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 200,
-        message: 'Product Updated',
-      });
+      successResponse(res, 200, `Success Update Product with ID ${id}`, { message: 'Product Updated' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }

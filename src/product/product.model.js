@@ -4,39 +4,56 @@ import HttpException from '../utils/Errors/http.exceptions.js';
 class ProductModel {
   #productRepository = dbRepo;
 
+  // Count Product
+  #coutProducts = async () => {
+    const count = `SELECT count(*) FROM 
+    (SELECT products.*,categories.name as name_category, sellers.name as name_seller 
+      FROM products 
+      INNER JOIN categories ON products.id_category = categories.id_category 
+      INNER JOIN sellers ON products.id_seller = sellers.id_seller) as products`;
+    const dataCount = await this.#productRepository.query(count);
+    return dataCount.rows[0].count;
+  };
+
   // Get All Products Service
   getAllProduct = async ({ search, sortBy, sort, page, limit }) => {
+    limit = Number(limit) || 10;
+    page = Number(page) || 1;
+    const offset = (page - 1) * limit;
     let query = '';
+
     if (search) {
       query = `
       SELECT products.*,categories.name as name_category, sellers.name as name_seller 
       FROM products 
       INNER JOIN categories ON products.id_category = categories.id_category 
       INNER JOIN sellers ON products.id_seller = sellers.id_seller 
-      WHERE products.description LIKE '%${search}%' AND 
-      products.name_product LIKE '%${search}%'
-      ORDER BY ${sortBy || 'id_product'} ${sort || 'DESC'} LIMIT ${limit || 10}`;
+      WHERE products.name_product LIKE '%${search}%'
+      ORDER BY ${sortBy || 'id_product'} ${sort || 'DESC'} LIMIT ${limit} OFFSET ${offset}`;
     } else {
       query = `SELECT products.*,categories.name as name_category, sellers.name as name_seller 
       FROM products 
       INNER JOIN categories ON products.id_category = categories.id_category 
       INNER JOIN sellers ON products.id_seller = sellers.id_seller 
-      ORDER BY ${sortBy || 'id_product'} ${sort || 'DESC'} LIMIT ${limit || 10}`;
+      ORDER BY ${sortBy || 'id_product'} ${sort || 'DESC'} LIMIT ${limit} OFFSET ${offset}`;
     }
     const products = await this.#productRepository.query(query);
+    const totalData = await this.#coutProducts();
 
     // Error if Product id not found!
     if (products.rowCount == 0) {
       throw new HttpException(404, `Products not found!`);
     }
 
-    const pagination = (products.rowCount * (limit || 10)) / (limit || 10);
+    // Total Page
+    const totalPage = Math.ceil(totalData / limit);
 
     return {
       data: products.rows,
-      page: page || 1,
-      count: Number(limit) > products.rowCount ? products.rowCount : Number(limit) || products.rowCount,
-      total: products.rowCount,
+      currentPage: page,
+      totalPage,
+      limit,
+      count: products.rowCount,
     };
   };
 
@@ -59,7 +76,8 @@ class ProductModel {
   // Create Product
   createProduct = async (data) => {
     const { name_product, price, color, size, stock, description, id_category, id_seller } = data;
-    const query = `INSERT INTO products VALUES(DEFAULT, '${name_product}', ${price}, '${description}', ${stock},NULL, '${color}','${size}', ${id_category}, ${id_seller})`;
+    const query = `INSERT INTO products VALUES(DEFAULT, '${name_product}', ${price}, '${description}', ${stock},'${color}','${size}', ${id_category}, ${id_seller})`;
+
     const products = await this.#productRepository.query(query);
     return products.rows;
   };
@@ -78,10 +96,10 @@ class ProductModel {
 
   // Update Product By Id
   updateProductById = async (id, data) => {
-    const getProduct = await this.getProductById(id);
+    await this.getProductById(id);
 
-    const { name_product, price, color, size, stock, description, rating } = data;
-    const query = `UPDATE products SET name_product='${name_product}', rating='${rating}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}' WHERE id_product = '${id}'`;
+    const { name_product, price, color, size, stock, description } = data;
+    const query = `UPDATE products SET name_product='${name_product}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}' WHERE id_product = '${id}'`;
     const updatedProduct = await this.#productRepository.query(query);
 
     return updatedProduct.rows;
