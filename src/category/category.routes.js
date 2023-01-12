@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authCheck } from '../utils/Middlewares/auth.middleware.js';
 import CategoryController from './category.controller.js';
 
 class CategoryRouter extends CategoryController {

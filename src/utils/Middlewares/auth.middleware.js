@@ -1,6 +1,7 @@
 import HttpException from '../Exceptions/http.exceptions.js';
 import jwt from 'jsonwebtoken';
 
+// Authenticate Middleware
 export const authCheck = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
 
@@ -13,13 +14,23 @@ export const authCheck = async (req, res, next) => {
       next(new HttpException(403, 'token is not valid!'));
     }
     req.user = payload;
-    next();
+    return next();
   });
 };
 
 export const isUser = async (req, res, next) => {
   authCheck(req, res, () => {
     if (req.user.id == req.params.id) {
+      return next();
+    }
+
+    next(new HttpException(401, 'Unauthorized, you not have access!'));
+  });
+};
+
+export const isBuyer = async (req, res, next) => {
+  authCheck(req, res, () => {
+    if (req.user.role == 'buyer') {
       return next();
     }
 

@@ -4,6 +4,7 @@ import cors from 'cors';
 import xss from 'xss-clean';
 import errorMiddleware from './src/utils/Middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
 
 class App {
   constructor(routers, port) {
@@ -20,6 +21,7 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(helmet());
+    this.app.use(morgan('dev'));
     this.app.use(xss());
     this.app.use(cors());
     this.app.use(cookieParser());
@@ -27,6 +29,11 @@ class App {
 
   #initialiseErrorHandling() {
     this.app.use(errorMiddleware);
+    this.app.use((req, res, next) => {
+      res.status(404).json({
+        message: 'Routes not found!',
+      });
+    });
   }
 
   // Initialise Controllers

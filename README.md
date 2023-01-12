@@ -1,7 +1,37 @@
-# shop-app-pijarcamp
+# About this API
 
-### Instalation
-`$npm install or npm update`
+This API is server-side application for long project i creating when im in pijarcamp, so this is still on going for now.
 
-### Runing
-`$npm run start:dev`
+## List third party module
+
+| Thrid Party     | npm install         |
+| --------------- | ------------------- |
+| [Express]       | npm i express       |
+| [Nodemon]       | npm i nodemon       |
+| [Morgan]        | npm i morgan        |
+| [PostgresSQL]   | npm i pg            |
+| [Dotenv]        | npm i dotenv        |
+| [CORS]          | npm i cors          |
+| [Eslint]        | npm i eslint        |
+| [Joi]           | npm i joi           |
+| [jsonwebtoken]  | npm i jsonwebtoken  |
+| [cookie-parser] | npm i cookie-parser |
+
+[express]: http://expressjs.com
+[nodemon]: https://www.npmjs.com/package/nodemon
+[morgan]: https://www.npmjs.com/package/morgan
+[postgressql]: https://node-postgres.com
+[dotenv]: https://www.npmjs.com/package/dotenv
+[cors]: https://www.npmjs.com/package/cors
+[joi]: https://www.npmjs.com/package/joi
+[jsonwebtoken]: https://www.npmjs.com/package/jsonwebtoken
+[cookie-parser]: https://www.npmjs.com/package/cookie-parser
+
+## Installation
+
+- npm install
+- npm run start:dev
+
+## Debug
+
+- npm run lint

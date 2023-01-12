@@ -4,11 +4,46 @@ import HttpException from '../utils/Exceptions/http.exceptions.js';
 class CategoryModel {
   #categoriesRepository = dbRepo;
 
+  // Count Product
+  #countCategories = async (search) => {
+    const count = `SELECT count(*) FROM categories ${search ? "where name LIKE '%" + search + "%'" : ''}`;
+    const dataCount = await this.#categoriesRepository.query(count);
+    return dataCount.rows[0].count;
+  };
+
   // Get All Category
-  getAllCategory = async () => {
-    const query = `SELECT * FROM categories`;
+  getAllCategory = async ({ search, limit, page, sort, sortBy }) => {
+    limit = Number(limit) || 10;
+    page = Number(page) || 1;
+    const offset = (page - 1) * limit;
+    let query = '';
+    let totalData = '';
+
+    if (search) {
+      totalData = await this.#countCategories(search);
+      query = `SELECT * FROM categories where name LIKE '%${search}%' ORDER BY 
+      ${sortBy || 'id'} ${sort || 'desc'} LIMIT ${limit} OFFSET ${offset}`;
+    } else {
+      totalData = await this.#countCategories();
+      query = `SELECT * FROM categories ORDER BY ${sortBy || 'id'} ${sort || 'desc'} LIMIT ${limit}`;
+    }
+
     const categories = await this.#categoriesRepository.query(query);
-    return categories.rows;
+
+    // Error if Product id not found!
+    if (categories.rowCount == 0) {
+      throw new HttpException(404, `Categories not found!`);
+    }
+
+    // Total Page
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data: categories.rows,
+      currentPage: page,
+      totalPage,
+      limit,
+    };
   };
 
   // Get single category

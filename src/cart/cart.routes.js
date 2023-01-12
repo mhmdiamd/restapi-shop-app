@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authCheck } from '../utils/Middlewares/auth.middleware.js';
+import { isBuyer } from '../utils/Middlewares/auth.middleware.js';
 import CartController from './cart.controller.js';
 
 class CartRouter extends CartController {
@@ -24,7 +24,7 @@ class CartRouter extends CartController {
     this.router.get(`${this.path}/:id_buyer/buyers`, this.getCartByIdBuyer);
 
     // Create Chart Router
-    this.router.post(`${this.path}/`, this.createCart);
+    this.router.post(`${this.path}/`, isBuyer, this.createCart);
 
     // Delete Chart Router
     this.router.delete(`${this.path}/:id`, this.deleteCartById);

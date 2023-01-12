@@ -5,7 +5,7 @@ class ProductModel {
   #productRepository = dbRepo;
 
   // Count Product
-  #coutProducts = async (search) => {
+  #countProducts = async (search) => {
     const count = `SELECT count(*) FROM 
     (SELECT products.*,categories.name as name_category, sellers.name as name_seller 
       FROM products 
@@ -25,7 +25,7 @@ class ProductModel {
     let totalData = '';
 
     if (search) {
-      totalData = await this.#coutProducts(search);
+      totalData = await this.#countProducts(search);
       query = `
       SELECT products.*,categories.name as name_category, sellers.name as name_seller 
       FROM products 
@@ -34,7 +34,7 @@ class ProductModel {
       WHERE products.name_product LIKE '%${search}%'
       ORDER BY ${sortBy || 'id'} ${sort || 'DESC'} LIMIT ${limit} OFFSET ${offset}`;
     } else {
-      totalData = await this.#coutProducts();
+      totalData = await this.#countProducts();
 
       query = `SELECT products.*,categories.name as name_category, sellers.name as name_seller 
       FROM products 
@@ -57,7 +57,6 @@ class ProductModel {
       currentPage: page,
       totalPage,
       limit,
-      // count: Number(totalData),
     };
   };
 

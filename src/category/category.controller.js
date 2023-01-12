@@ -8,10 +8,11 @@ class CategoryController {
   // Get all category
   getAllCategory = async (req, res, next) => {
     try {
-      const categories = await this.#categoryModel.getAllCategory();
+      const categories = await this.#categoryModel.getAllCategory(req.query);
+      const { data, ...other } = categories;
 
       // Success Response
-      successResponse(res, 200, 'Success get all category!', categories);
+      successResponse(res, 200, 'Success get all category!', { data, pagination: other });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
