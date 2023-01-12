@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import ProductController from './product.controller.js';
 import { productSchema } from './product.validation.js';
+import { authCheck, isUser } from './../utils/Middlewares/auth.middleware.js';
 
 class ProductRouter extends ProductController {
   path = '/products';
@@ -20,14 +21,17 @@ class ProductRouter extends ProductController {
     // Get product by id Router
     this.router.get(`${this.path}/:id`, this.getProductById);
 
+    // Get product by id Seller Router
+    this.router.get(`${this.path}/:id/sellers`, this.getProductByIdSeller);
+
     // Create Product Router
-    this.router.post(`${this.path}/`, productSchema, this.createProduct);
+    this.router.post(`${this.path}/`, authCheck, productSchema, this.createProduct);
 
     // Delete Product Router
     this.router.delete(`${this.path}/:id`, this.deleteProductById);
 
     // Update Product Router
-    this.router.put(`${this.path}/:id`, productSchema, this.updateProductById);
+    this.router.put(`${this.path}/:id`, this.updateProductById);
   }
 }
 

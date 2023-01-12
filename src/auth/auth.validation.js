@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 // Register Schema validation
 export async function registerSchema(req, res, next) {

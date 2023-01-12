@@ -3,6 +3,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import xss from 'xss-clean';
 import errorMiddleware from './src/utils/Middlewares/error.middleware.js';
+import cookieParser from 'cookie-parser';
 
 class App {
   constructor(routers, port) {
@@ -18,9 +19,10 @@ class App {
   #initialiseMiddleware() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
-    this.app.use(helmet()); 
+    this.app.use(helmet());
     this.app.use(xss());
     this.app.use(cors());
+    this.app.use(cookieParser());
   }
 
   #initialiseErrorHandling() {

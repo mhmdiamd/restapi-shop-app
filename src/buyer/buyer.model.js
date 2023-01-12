@@ -1,12 +1,12 @@
 import { dbRepo } from '../../Config/db.config.js';
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 class BuyerModel {
   #DB = dbRepo;
 
   // Get All Buyer Service
   getAllBuyer = async () => {
-    let query = 'SELECT id_buyer, name, phone, email, address gender, birth_date, role, photo FROM buyers';
+    let query = 'SELECT id, name, phone, email, address gender, birth_date, role, photo FROM buyers';
     const buyers = await this.#DB.query(query);
 
     // Error if buyers id not found!
@@ -19,7 +19,7 @@ class BuyerModel {
 
   // Get single User
   getBuyerById = async (id) => {
-    const query = `SELECT id_buyer, name, email,phone, address, birth_date, gender, photo FROM buyers WHERE id_buyer = '${id}'`;
+    const query = `SELECT id, name, email,phone, address, birth_date, gender, photo FROM buyers WHERE id = '${id}'`;
 
     const buyer = await this.#DB.query(query);
     if (buyer.rowCount == 0) {
@@ -32,7 +32,7 @@ class BuyerModel {
   // Delete User
   deleteBuyerById = async (id) => {
     await this.getBuyerById(id);
-    const query = `DELETE FROM buyers WHERE id_buyer = ${id}`;
+    const query = `DELETE FROM buyers WHERE id = ${id}`;
     const deletedBuyer = await this.#DB.query(query);
 
     return deletedBuyer.rows;
@@ -50,7 +50,7 @@ class BuyerModel {
     gender='${gender || 'man'}', 
     address=${address ? address : null}, 
     photo='${photo}' 
-    WHERE id_buyer = '${id}'`;
+    WHERE id = '${id}'`;
     const updatedBuyer = await this.#DB.query(query);
 
     return updatedBuyer.rows;

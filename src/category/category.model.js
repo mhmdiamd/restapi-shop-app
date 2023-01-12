@@ -1,5 +1,5 @@
 import { dbRepo } from '../../Config/db.config.js';
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 class CategoryModel {
   #categoriesRepository = dbRepo;
@@ -13,7 +13,8 @@ class CategoryModel {
 
   // Get single category
   getCategoryById = async (id) => {
-    const query = `SELECT * FROM categories WHERE id_category = '${id}'`;
+    console.log(id);
+    const query = `SELECT * FROM categories WHERE id = '${id}'`;
     const category = await this.#categoriesRepository.query(query);
 
     if (category.rowCount == 0) {
@@ -24,16 +25,16 @@ class CategoryModel {
   };
 
   // Create category
-  createCategory = async ({ name_categories }) => {
-    const query = `INSERT INTO categories VALUES(DEFAULT, '${name_categories}')`;
+  createCategory = async ({ name }) => {
+    const query = `INSERT INTO categories VALUES(DEFAULT, '${name}')`;
     const categories = await this.#categoriesRepository.query(query);
     return categories.rows;
   };
 
   // delete category by id
   deleteCategoryById = async (id) => {
-    const getCategory = await this.getCategoryById(id);
-    const query = `DELETE FROM categories WHERE id_category = ${id}`;
+    await this.getCategoryById(id);
+    const query = `DELETE FROM categories WHERE id = ${id}`;
     const deletedCategories = await this.#categoriesRepository.query(query);
 
     return deletedCategories.rows;

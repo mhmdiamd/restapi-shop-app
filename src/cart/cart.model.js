@@ -1,14 +1,14 @@
 import { dbRepo } from '../../Config/db.config.js';
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 class CartModel {
   #DB = dbRepo;
 
   // Get All Cart Service
   getAllCart = async () => {
-    let query = `SELECT carts.*,products.*, buyers.name as buyer_name, buyers.email FROM carts 
-      INNER JOIN products ON carts.id_product = products.id_product
-      INNER JOIN buyers ON carts.id_buyer = buyers.id_buyer`;
+    let query = `SELECT carts.*,products.name_product, buyers.name as buyer_name, buyers.email FROM carts 
+      INNER JOIN products ON carts.id_product = products.id
+      INNER JOIN buyers ON carts.id_buyer = buyers.id`;
     const carts = await this.#DB.query(query);
 
     // Error if Cart id not found!
@@ -21,10 +21,11 @@ class CartModel {
 
   // Get single Cart
   getCartById = async (id) => {
-    const query = `SELECT carts.*,products.*, buyers.name as buyer_name, buyers.email FROM carts 
-    INNER JOIN products ON carts.id_product = products.id_product
-    INNER JOIN buyers ON carts.id_buyer = buyers.id_buyer
-    WHERE carts.id_cart=${id}`;
+    console.log(id);
+    const query = `SELECT carts.*,products.name_product, buyers.name as buyer_name, buyers.email FROM carts 
+    INNER JOIN products ON carts.id_product = products.id
+    INNER JOIN buyers ON carts.id_buyer = buyers.id
+    WHERE carts.id=${id}`;
 
     const cart = await this.#DB.query(query);
     if (cart.rowCount == 0) {
@@ -36,9 +37,9 @@ class CartModel {
 
   // Get cart by id buyer
   getCartByIdBuyer = async (id_buyer) => {
-    const query = `SELECT carts.*,products.*, buyers.name as buyer_name, buyers.email FROM carts 
-    INNER JOIN products ON carts.id_product = products.id_product
-    INNER JOIN buyers ON carts.id_buyer = buyers.id_buyer
+    const query = `SELECT carts.*,products.name_product, buyers.name as buyer_name, buyers.email FROM carts 
+    INNER JOIN products ON carts.id_product = products.id
+    INNER JOIN buyers ON carts.id_buyer = buyers.id
     WHERE carts.id_buyer=${id_buyer}`;
 
     const carts = await this.#DB.query(query);
@@ -46,13 +47,13 @@ class CartModel {
       throw new HttpException(404, `Cart with ID Buyer ${id} is not found!`);
     }
 
-    return carts.rows[0];
+    return carts.rows;
   };
 
   // Create Cart
   createCart = async (data) => {
-    const { id_buyer, id_product } = data;
-    const query = `INSERT INTO carts VALUES(DEFAULT, ${id_buyer}, ${id_product}, 1)`;
+    const { id_buyer, id_product, quantity } = data;
+    const query = `INSERT INTO carts VALUES(DEFAULT, ${id_buyer}, ${id_product}, ${quantity || 1})`;
     const cart = await this.#DB.query(query);
     return cart.rows;
   };
@@ -60,20 +61,20 @@ class CartModel {
   // Delete Cart
   deleteCartById = async (id) => {
     await this.getCartById(id);
-    const query = `DELETE FROM carts WHERE id_cart = ${id}`;
+    const query = `DELETE FROM carts WHERE id = ${id}`;
     const deletedCart = await this.#DB.query(query);
 
     return deletedCart.rows;
   };
 
   // Update Cart By Id
-  updateCartById = async (id, quantity) => {
+  updateCartById = async (id, { quantity }) => {
     await this.getCartById(id);
 
-    const query = `UPDATE carts SET quantity=${quantity} WHERE id_cart=${id}`;
+    const query = `UPDATE carts SET quantity=${quantity} WHERE id=${id}`;
     const updatedCart = await this.#DB.query(query);
 
-    return updatedCart.rows;
+    return updatedCart.rows[0];
   };
 }
 

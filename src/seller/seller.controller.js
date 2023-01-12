@@ -1,4 +1,4 @@
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
 import SellerModel from './seller.model.js';
 

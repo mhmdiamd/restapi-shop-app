@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { authCheck } from '../utils/Middlewares/auth.middleware.js';
 import CartController from './cart.controller.js';
 
 class CartRouter extends CartController {

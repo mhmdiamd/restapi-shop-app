@@ -1,5 +1,5 @@
 import ProductModel from './product.model.js';
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from './../utils/Helpers/response.js';
 
 class ProductController {
@@ -32,10 +32,25 @@ class ProductController {
     }
   };
 
+  // Get Product By Id Seller
+  getProductByIdSeller = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      const product = await this.#productModel.getProductByIdSeller(id);
+
+      // Success Response
+      successResponse(res, 200, `Success get Products with id seller ${id}!`, product);
+    } catch (err) {
+      next(new HttpException(err.status, err.message));
+    }
+  };
+
   // Create Product
   createProduct = async (req, res, next) => {
+    const { id } = req.user;
+    const data = { ...req.body, id_seller: id };
     try {
-      const createProduct = await this.#productModel.createProduct(req.body);
+      await this.#productModel.createProduct(data);
 
       // Success Response
       successResponse(res, 200, 'Success created Product!', { message: 'Product was created!' });

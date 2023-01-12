@@ -1,8 +1,10 @@
 import Joi from 'joi';
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 // Register Schema validation
 export async function productSchema(req, res, next) {
+  const { id } = req.user;
+  const data = { ...req.body, id_seller: id };
   const schema = Joi.object({
     name_product: Joi.string().required(),
     price: Joi.number().required(),
@@ -16,7 +18,7 @@ export async function productSchema(req, res, next) {
   });
 
   await schema
-    .validateAsync(req.body)
+    .validateAsync(data)
     .then((res) => next())
     .catch((err) => next(new HttpException(err.status, err.message)));
 }

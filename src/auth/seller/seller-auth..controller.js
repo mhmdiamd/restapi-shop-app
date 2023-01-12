@@ -1,6 +1,8 @@
-import HttpException from '../../utils/Errors/http.exceptions.js';
+import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import SellerModel from './seller-auth.model.js';
 import bcrypt from 'bcryptjs';
+import { generateToken } from '../token.js';
+import { successResponse } from './../../utils/Helpers/response.js';
 
 class SellerAuthController {
   #sellerModel = new SellerModel();
@@ -15,7 +17,7 @@ class SellerAuthController {
 
     const user = { ...req.user, password };
     try {
-      const newSeller = await this.#sellerModel.register(user);
+      await this.#sellerModel.register(user);
       res.status(200).json({
         status: 'success',
         statusCode: 201,
@@ -28,7 +30,24 @@ class SellerAuthController {
 
   // User Login
   login = async (req, res, next) => {
-    const data = req.body;
+    try {
+      const userLogin = await this.#sellerModel.login(req.body);
+      const accessToken = generateToken(userLogin);
+
+      res.cookie('access_token', accessToken, {
+        httpOnly: true,
+      });
+
+      res.status(200).json({
+        status: 'success',
+        statusCode: 200,
+        message: 'Login success!',
+        data: userLogin,
+        accessToken,
+      });
+    } catch (err) {
+      next(new HttpException(err.status, err.message));
+    }
   };
 }
 

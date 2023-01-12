@@ -1,12 +1,13 @@
 {
-  "name": "backend",
+  "name": "rest-api-shop-app-pijarcamp",
   "version": "1.0.0",
   "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "lint": "eslint --fix --ext .js,.jsx ."
   },
   "keywords": [],
   "author": "",

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { isUser } from '../utils/Middlewares/auth.middleware.js';
 import SellerController from './seller.controller.js';
 
 class SellerRouter extends SellerController {

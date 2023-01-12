@@ -1,11 +1,11 @@
-import HttpException from '../utils/Errors/http.exceptions.js';
+import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
 import CartModel from './cart.model.js';
 
 class CartController {
   #cartModel = new CartModel();
 
-  // Get all Chart
+  // Get all Cart
   getAllCart = async (req, res, next) => {
     const filter = req.query;
     try {
@@ -20,7 +20,7 @@ class CartController {
     }
   };
 
-  // Get Chart By Id
+  // Get Cart By Id
   getCartById = async (req, res, next) => {
     const { id } = req.params;
     try {
@@ -31,7 +31,7 @@ class CartController {
     }
   };
 
-  // Get Chart By Id
+  // Get Cart By Id
   getCartByIdBuyer = async (req, res, next) => {
     const { id_buyer } = req.params;
     try {
@@ -42,40 +42,40 @@ class CartController {
     }
   };
 
-  // Create Chart
+  // Create Cart
   createCart = async (req, res, next) => {
     try {
       await this.#cartModel.createCart(req.body);
-      successResponse(res, 200, `Success create cart!`, { messgae: 'Chart was created!' });
+      successResponse(res, 200, `Success create cart!`, { messgae: 'Cart was created!' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
   };
 
-  // Delete Chart
+  // Delete Cart
   deleteCartById = async (req, res, next) => {
     const { id } = req.params;
     try {
       await this.#cartModel.deleteCartById(id);
-      successResponse(res, 200, `Success updated cart with ID ${id}`, { message: 'Chart Updated!' });
+      successResponse(res, 200, `Success updated cart with ID ${id}`, { message: 'Cart Updated!' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
   };
 
-  // Updae Chart By Id
+  // Updae Cart By Id
   updateCartById = async (req, res, next) => {
     const { id } = req.params;
     const data = req.body;
     try {
       await this.#cartModel.updateCartById(id, data);
-      successResponse(res, 200, `Success updated cart with ID ${id}`, { message: 'Chart updated!' });
+      successResponse(res, 200, `Success updated cart with ID ${id}`, { message: 'Cart updated!' });
 
-      res.status(200).json({
-        status: 'success',
-        statusCode: 200,
-        message: 'Chart Updated',
-      });
+      // res.status(200).json({
+      //   status: 'success',
+      //   statusCode: 200,
+      //   message: 'Cart Updated',
+      // });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }

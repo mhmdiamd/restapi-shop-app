@@ -1,6 +1,7 @@
-import HttpException from '../../utils/Errors/http.exceptions.js';
+import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import BuyerModel from './buyer-auth.model.js';
 import bcrypt from 'bcryptjs';
+import { generateToken } from './../token.js';
 
 class BuyerAuthController {
   #buyerModel = new BuyerModel();
@@ -28,7 +29,24 @@ class BuyerAuthController {
 
   // User Login
   login = async (req, res, next) => {
-    const data = req.body;
+    try {
+      const userLogin = await this.#buyerModel.login(req.body);
+      const accessToken = generateToken(userLogin);
+
+      res.cookie('access_token', accessToken, {
+        httpOnly: true,
+      });
+
+      res.status(200).json({
+        status: 'success',
+        statusCode: 200,
+        message: 'Login success!',
+        data: userLogin,
+        accessToken,
+      });
+    } catch (err) {
+      next(new HttpException(err.status, err.message));
+    }
   };
 }
 
