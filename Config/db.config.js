@@ -5,9 +5,9 @@ dotenv.config();
 const { Pool } = pg;
 
 export const dbRepo = new Pool({
-  user: process.env.PG_USER,
-  host: 'localhost',
-  port: process.env.PG_PORT,
-  password: process.env.PG_PASSWORD,
-  database: process.env.PG_NAME,
+  user: 'penpbpcl',
+  host: 'floppy.db.elephantsql.com',
+  port: 5432,
+  password: 'rYASqKwGLnY4mlW3ptfTRbH_bGijsC8O',
+  database: 'penpbpcl',
 });
