@@ -2,7 +2,6 @@ import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import SellerModel from './seller-auth.model.js';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../token.js';
-import { successResponse } from './../../utils/Helpers/response.js';
 
 class SellerAuthController {
   #sellerModel = new SellerModel();
