@@ -22,7 +22,8 @@ This API is server-side application for long project i creating when im in pijar
 [morgan]: https://www.npmjs.com/package/morgan
 [postgressql]: https://node-postgres.com
 [dotenv]: https://www.npmjs.com/package/dotenv
-[cors]: https://www.npmjs.com/package/cors
+[cors]: https://www.npmjs.com/package/cos
+[eslint]: https://eslint.org/
 [joi]: https://www.npmjs.com/package/joi
 [jsonwebtoken]: https://www.npmjs.com/package/jsonwebtoken
 [cookie-parser]: https://www.npmjs.com/package/cookie-parser
