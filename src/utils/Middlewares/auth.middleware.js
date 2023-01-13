@@ -29,11 +29,10 @@ export const isUser = async (req, res, next) => {
 };
 
 export const isBuyer = async (req, res, next) => {
-  authCheck(req, res, () => {
-    if (req.user.role == 'buyer') {
-      return next();
+  authCheck(req, res, next, () => {
+    if (req.user.role != 'buyer') {
+      return next(new HttpException(401, 'Unauthorized, you are not buyer!'));
     }
-
-    next(new HttpException(401, 'Unauthorized, you not have access!'));
+    return next();
   });
 };

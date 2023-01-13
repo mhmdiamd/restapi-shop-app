@@ -44,9 +44,10 @@ class CartController {
 
   // Create Cart
   createCart = async (req, res, next) => {
-    console.log(req.user);
+    const data = { ...req.body, id_buyer: req.user.id };
+    console.log(data);
     try {
-      await this.#cartModel.createCart(req.body);
+      await this.#cartModel.createCart(data);
       successResponse(res, 200, `Success create cart!`, { messgae: 'Cart was created!' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
@@ -71,12 +72,6 @@ class CartController {
     try {
       await this.#cartModel.updateCartById(id, data);
       successResponse(res, 200, `Success updated cart with ID ${id}`, { message: 'Cart updated!' });
-
-      // res.status(200).json({
-      //   status: 'success',
-      //   statusCode: 200,
-      //   message: 'Cart Updated',
-      // });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
