@@ -1,5 +1,7 @@
 import { dbRepo } from '../../Config/db.config.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
+import { randomUUID } from 'crypto';
+import fs from 'fs';
 
 class ProductModel {
   #productRepository = dbRepo;
@@ -11,7 +13,7 @@ class ProductModel {
       FROM products 
       INNER JOIN categories ON products.id_category = categories.id 
       INNER JOIN sellers ON products.id_seller = sellers.id) as products 
-      ${search ? "where products.name_product LIKE '%" + search + "%'" : ''}`;
+      ${search ? "where products.product_name LIKE '%" + search + "%'" : ''}`;
     const dataCount = await this.#productRepository.query(count);
     return dataCount.rows[0].count;
   };
@@ -31,7 +33,7 @@ class ProductModel {
       FROM products 
       INNER JOIN categories ON products.id_category = categories.id 
       INNER JOIN sellers ON products.id_seller = sellers.id 
-      WHERE products.name_product LIKE '%${search}%'
+      WHERE products.product_name LIKE '%${search}%'
       ORDER BY ${sortBy || 'id'} ${sort || 'DESC'} LIMIT ${limit} OFFSET ${offset}`;
     } else {
       totalData = await this.#countProducts();
@@ -94,8 +96,10 @@ class ProductModel {
 
   // Create Product
   createProduct = async (data) => {
-    const { name_product, price, color, size, stock, description, id_category, id_seller } = data;
-    const query = `INSERT INTO products VALUES(DEFAULT, '${name_product}', ${price}, '${description}', ${stock},'${color}','${size}', ${id_category}, ${id_seller})`;
+    console.log(randomUUID());
+    const { product_name, price, color, size, stock, description, id_category, id_seller, photo } = data;
+    const query = `INSERT INTO products VALUES('${randomUUID()}', '${product_name}', '${description}',
+    ${Number(price)}, '${color}','${size}', ${Number(stock)}, '${id_category}', '${id_seller}', '${photo}')`;
 
     const products = await this.#productRepository.query(query);
     return products.rows;
@@ -107,7 +111,7 @@ class ProductModel {
     await this.getProductById(id);
 
     // Query when product was found!
-    const query = `DELETE FROM products WHERE id = ${id}`;
+    const query = `DELETE FROM products WHERE id = '${id}'`;
     const deletedProduct = await this.#productRepository.query(query);
 
     return deletedProduct.rows;
@@ -115,11 +119,20 @@ class ProductModel {
 
   // Update Product By Id
   updateProductById = async (id, data) => {
-    await this.getProductById(id);
+    const oldProduct = await this.getProductById(id);
 
-    const { name_product, price, color, size, stock, description } = data;
-    const query = `UPDATE products SET name_product='${name_product}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}' WHERE id = '${id}'`;
+    const { product_name, price, color, size, stock, description, id_category, photo } = data;
+    const query = `UPDATE products SET product_name='${product_name}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}', id_category=${id_category}, photo='${photo}' WHERE id = '${id}'`;
     const updatedProduct = await this.#productRepository.query(query);
+
+    // Delete old Photo when photo was updated!
+    const oldPhoto = oldProduct.photo.split('/')[5];
+    if (updatedProduct && photo) {
+      // Remove fto using fs (File System!)
+      fs.rmSync(`Public/Images/Products/${oldPhoto}`, {
+        force: false,
+      });
+    }
 
     return updatedProduct.rows;
   };

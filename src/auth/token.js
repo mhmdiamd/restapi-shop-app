@@ -1,14 +1,13 @@
 import jwt from 'jsonwebtoken';
-import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 export function generateToken(data) {
   return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '24h',
+    expiresIn: '1h',
   });
 }
 
 export function generateRefreshToken(data) {
-  return jwt.sign(data, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: '24h',
+  return jwt.sign(data, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: '3h',
   });
 }

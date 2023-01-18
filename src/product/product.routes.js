@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import ProductController from './product.controller.js';
-import { productSchema } from './product.validation.js';
-import { authCheck, isUser } from './../utils/Middlewares/auth.middleware.js';
+// import { productSchema } from './product.validation.js';
+import { authCheck, isUser, isYourPoduct } from './../utils/Middlewares/auth.middleware.js';
+import { multerStorage, productStorage } from '../../Config/multer.config.js';
 
 class ProductRouter extends ProductController {
   path = '/products';
   router = Router();
+  upload = multerStorage(productStorage);
+  // upload = multer({ dest: '../../Public/uploads/products' });
 
   constructor() {
     // running Router
@@ -25,13 +28,13 @@ class ProductRouter extends ProductController {
     this.router.get(`${this.path}/:id/sellers`, this.getProductByIdSeller);
 
     // Create Product Router
-    this.router.post(`${this.path}/`, authCheck, productSchema, this.createProduct);
+    this.router.post(`${this.path}/`, authCheck, this.upload.single('photo'), this.createProduct);
 
     // Delete Product Router
     this.router.delete(`${this.path}/:id`, this.deleteProductById);
 
     // Update Product Router
-    this.router.put(`${this.path}/:id`, this.updateProductById);
+    this.router.put(`${this.path}/:id`, isYourPoduct, this.upload.single('photo'), this.updateProductById);
   }
 }
 

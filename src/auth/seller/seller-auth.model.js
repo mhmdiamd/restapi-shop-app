@@ -1,13 +1,14 @@
 import { dbRepo } from '../../../Config/db.config.js';
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import bcrypt from 'bcryptjs';
+import { randomUUID } from 'crypto';
 
 class SellerModel {
   #authRepository = dbRepo;
 
   // Auth Register
   register = async ({ name, email, password }) => {
-    const query = `INSERT INTO sellers VALUES(DEFAULT, '${name}', '${email}', '${password}', 'seller', null, null, null, null, 'photodefault.jpg')`;
+    const query = `INSERT INTO sellers VALUES('${randomUUID()}', '${name}', '${email}', '${password}', DEFAULT, null, null, null, null, DEFAULT)`;
     const userRegister = await this.#authRepository.query(query);
     return userRegister.rows;
   };
@@ -25,6 +26,7 @@ class SellerModel {
     if (!isValidPassword) {
       throw new HttpException(401, 'Email or Password is invalid!');
     }
+
     const { id, name, email, role } = findEmail.rows[0];
     return { id, name, email, role };
   };

@@ -3,6 +3,7 @@ import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 // Register Schema validation
 export async function registerSchema(req, res, next) {
+  
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string()
