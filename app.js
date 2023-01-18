@@ -55,25 +55,25 @@ class App {
 
   // Lister Server
   listen() {
-    // if (cluster.isPrimary) {
-    //   for (let i = 0; i < os.cpus().length; i++) {
-    //     cluster.fork();
-    //   }
+    if (cluster.isPrimary) {
+      for (let i = 0; i < os.cpus().length; i++) {
+        cluster.fork();
+      }
 
-    //   cluster.addListener('exit', (worker, code, signal) => {
-    //     console.log(`Worker with id ${worker.id} is exit`);
-    //     cluster.fork();
-    //   });
-    // }
+      cluster.addListener('exit', (worker, code, signal) => {
+        console.log(`Worker with id ${worker.id} is exit`);
+        cluster.fork();
+      });
+    }
 
-    // if (cluster.isWorker) {
-    //   this.app.listen(this.port, () => {
-    //     console.log(`Server Running with worker id ${process.pid} on port ${this.port} with`);
-    //   });
-    // }
-    this.app.listen(this.port, () => {
-      console.log(`Server Running with worker id ${process.pid} on port ${this.port} with`);
-    });
+    if (cluster.isWorker) {
+      this.app.listen(this.port, () => {
+        console.log(`Server Running with worker id ${process.pid} on port ${this.port} with`);
+      });
+    }
+    // this.app.listen(this.port, () => {
+    //   console.log(`Server Running with worker id ${process.pid} on port ${this.port} with`);
+    // });
   }
 }
 
