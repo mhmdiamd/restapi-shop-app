@@ -20,10 +20,10 @@ export const multerStorage = (storage) => {
       fileSize: maxSize,
     },
     fileFilter: (req, file, cb) => {
-      const acceptedTypeFile = ['jpg', 'png'];
+      const acceptedTypeFile = ['jpg', 'png', 'jpeg'];
       // Get Extension file
       const extFile = path.extname(file.originalname).split('.')[1];
-      if (!acceptedTypeFile.includes(extFile)) {
+      if (!acceptedTypeFile.includes(extFile.toLowerCase())) {
         return cb(new HttpException(422, 'File should png or jpg! '));
       }
       cb(null, file);

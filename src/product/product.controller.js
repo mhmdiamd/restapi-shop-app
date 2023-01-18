@@ -56,7 +56,7 @@ class ProductController {
     // Get File
     const photo = req.file;
     // Create file name
-    const photoUrl = `${process.env.HOST}:${process.env.PORT}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
+    const photoUrl = `${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
     // Get Id user login
     const { id } = req.user;
     // merge data before send to model
@@ -89,7 +89,7 @@ class ProductController {
     // Get File
     const photo = req.file;
     // Create file name
-    const photoUrl = `${process.env.HOST}:${process.env.PORT}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
+    const photoUrl = `${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
     // Get Id user login
     const { id } = req.params;
     // merge data before send to model
