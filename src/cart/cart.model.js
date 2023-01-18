@@ -1,12 +1,13 @@
 import { dbRepo } from '../../Config/db.config.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
+import { randomUUID } from 'crypto';
 
 class CartModel {
   #DB = dbRepo;
 
   // Get All Cart Service
   getAllCart = async () => {
-    let query = `SELECT carts.*,products.name_product, buyers.name as buyer_name, buyers.email FROM carts 
+    let query = `SELECT carts.*,products.product_name, buyers.name as buyer_name, buyers.email FROM carts 
       INNER JOIN products ON carts.id_product = products.id
       INNER JOIN buyers ON carts.id_buyer = buyers.id`;
     const carts = await this.#DB.query(query);
@@ -21,11 +22,10 @@ class CartModel {
 
   // Get single Cart
   getCartById = async (id) => {
-    console.log(id);
-    const query = `SELECT carts.*,products.name_product, buyers.name as buyer_name, buyers.email FROM carts 
+    const query = `SELECT carts.*,products.product_name, buyers.name as buyer_name, buyers.email FROM carts 
     INNER JOIN products ON carts.id_product = products.id
     INNER JOIN buyers ON carts.id_buyer = buyers.id
-    WHERE carts.id=${id}`;
+    WHERE carts.id='${id}'`;
 
     const cart = await this.#DB.query(query);
     if (cart.rowCount == 0) {
@@ -37,10 +37,10 @@ class CartModel {
 
   // Get cart by id buyer
   getCartByIdBuyer = async (id_buyer) => {
-    const query = `SELECT carts.*,products.name_product, buyers.name as buyer_name, buyers.email FROM carts 
+    const query = `SELECT carts.*,products.product_name, buyers.name as buyer_name, buyers.email FROM carts 
     INNER JOIN products ON carts.id_product = products.id
     INNER JOIN buyers ON carts.id_buyer = buyers.id
-    WHERE carts.id_buyer=${id_buyer}`;
+    WHERE carts.id_buyer='${id_buyer}'`;
 
     const carts = await this.#DB.query(query);
     if (carts.rowCount == 0) {
@@ -53,7 +53,7 @@ class CartModel {
   // Create Cart
   createCart = async (data) => {
     const { id_buyer, id_product, quantity } = data;
-    const query = `INSERT INTO carts VALUES(DEFAULT, ${id_buyer}, ${id_product}, ${quantity || 1})`;
+    const query = `INSERT INTO carts VALUES('${randomUUID()}', '${id_buyer}', '${id_product}', ${quantity || 1})`;
     const cart = await this.#DB.query(query);
     return cart.rows;
   };
@@ -61,9 +61,8 @@ class CartModel {
   // Delete Cart
   deleteCartById = async (id) => {
     await this.getCartById(id);
-    const query = `DELETE FROM carts WHERE id = ${id}`;
+    const query = `DELETE FROM carts WHERE id = '${id}'`;
     const deletedCart = await this.#DB.query(query);
-
     return deletedCart.rows;
   };
 
@@ -71,7 +70,7 @@ class CartModel {
   updateCartById = async (id, { quantity }) => {
     await this.getCartById(id);
 
-    const query = `UPDATE carts SET quantity=${quantity} WHERE id=${id}`;
+    const query = `UPDATE carts SET quantity=${quantity} WHERE id='${id}'`;
     const updatedCart = await this.#DB.query(query);
 
     return updatedCart.rows[0];

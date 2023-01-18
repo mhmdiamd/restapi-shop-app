@@ -45,7 +45,6 @@ class CartController {
   // Create Cart
   createCart = async (req, res, next) => {
     const data = { ...req.body, id_buyer: req.user.id };
-    console.log(data);
     try {
       await this.#cartModel.createCart(data);
       successResponse(res, 200, `Success create cart!`, { messgae: 'Cart was created!' });

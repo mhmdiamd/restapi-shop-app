@@ -1,8 +1,12 @@
-import Redis from 'redis';
+import Redis from 'ioredis';
 
-const redisClient = Redis.createClient();
+const redisClient = new Redis({
+  host: process.env.RD_HOST,
+  port: process.env.RD_PORT,
+  password: process.env.RD_PASSWORD,
+});
+
 redisClient.on('error', (err) => console.log('Redis Client Error', err));
-await redisClient.connect();
 
 export function setOrGetCache(key, cb) {
   return new Promise(async (resolve, reject) => {
@@ -12,12 +16,17 @@ export function setOrGetCache(key, cb) {
       return resolve(JSON.parse(dataCache));
     }
 
-    const freshData = await cb();
-    redisClient.setEx(key, 60 * 60, JSON.stringify(freshData));
-    resolve(freshData);
+    cb()
+      .then((res) => {
+        redisClient.set(key, JSON.stringify(res), 'ex', 180);
+        resolve(res);
+      })
+      .catch((err) => {
+        reject(err);
+      });
   });
 }
 
 export async function clearRedisCache(key) {
-  await redisClient.DEL(key);
+  await redisClient.del(key);
 }

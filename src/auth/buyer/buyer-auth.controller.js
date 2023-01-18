@@ -1,7 +1,10 @@
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import BuyerModel from './buyer-auth.model.js';
 import bcrypt from 'bcryptjs';
-import { generateToken } from './../token.js';
+import { generateRefreshToken, generateToken } from '../token.js';
+import { successResponse } from '../../utils/Helpers/response.js';
+import { createRefreshToken } from '../token/token.service.js';
+import { token } from 'morgan';
 
 class BuyerAuthController {
   #buyerModel = new BuyerModel();
@@ -16,12 +19,8 @@ class BuyerAuthController {
 
     const user = { ...req.user, password };
     try {
-      const newBuyer = await this.#buyerModel.register(user);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 201,
-        message: 'Register success!',
-      });
+      await this.#buyerModel.register(user);
+      successResponse(res, 200, 'Register Success please Login!', { message: 'Register success!' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -32,17 +31,20 @@ class BuyerAuthController {
     try {
       const userLogin = await this.#buyerModel.login(req.body);
       const accessToken = generateToken(userLogin);
+      const refreshToken = generateRefreshToken(userLogin);
 
       res.cookie('access_token', accessToken, {
         httpOnly: true,
       });
 
+      await createRefreshToken(refreshToken);
       res.status(200).json({
         status: 'success',
         statusCode: 200,
         message: 'Login success!',
         data: userLogin,
         accessToken,
+        refreshToken,
       });
     } catch (err) {
       next(new HttpException(err.status, err.message));

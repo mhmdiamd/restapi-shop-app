@@ -2,6 +2,7 @@ import { dbRepo } from '../../Config/db.config.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { randomUUID } from 'crypto';
 import fs from 'fs';
+import { deletePhoto } from '../utils/Helpers/deletePhoto.js';
 
 class ProductModel {
   #productRepository = dbRepo;
@@ -108,7 +109,10 @@ class ProductModel {
   // DeleteProduct
   deleteProductById = async (id) => {
     // Check product is not found!
-    await this.getProductById(id);
+    const product = await this.getProductById(id);
+    if (product) {
+      deletePhoto(`Public/Images/Products`, product);
+    }
 
     // Query when product was found!
     const query = `DELETE FROM products WHERE id = '${id}'`;
@@ -123,15 +127,12 @@ class ProductModel {
 
     const { product_name, price, color, size, stock, description, id_category, photo } = data;
     const query = `UPDATE products SET product_name='${product_name}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}', id_category=${id_category}, photo='${photo}' WHERE id = '${id}'`;
-    const updatedProduct = await this.#productRepository.query(query);
 
+    
+    const updatedProduct = await this.#productRepository.query(query);
     // Delete old Photo when photo was updated!
-    const oldPhoto = oldProduct.photo.split('/')[5];
     if (updatedProduct && photo) {
-      // Remove fto using fs (File System!)
-      fs.rmSync(`Public/Images/Products/${oldPhoto}`, {
-        force: false,
-      });
+      deletePhoto(`Public/Images/Products`, oldProduct);
     }
 
     return updatedProduct.rows;

@@ -39,7 +39,6 @@ export const isYourPoduct = async (req, res, next) => {
       .then((res) => res.id_seller)
       .catch((err) => next(new HttpException(err.status, err.message)));
 
-    console.log(idSellerProduct);
     if (req.user.id == idSellerProduct) {
       return next();
     }
@@ -48,10 +47,21 @@ export const isYourPoduct = async (req, res, next) => {
   });
 };
 
+// is Buyer Middleware
 export const isBuyer = async (req, res, next) => {
-  authCheck(req, res, next, () => {
+  authCheck(req, res, () => {
     if (req.user.role != 'buyer') {
       return next(new HttpException(401, 'Unauthorized, you are not buyer!'));
+    }
+    next();
+  });
+};
+
+// is Seller Middleware
+export const isSeller = async (req, res, next) => {
+  authCheck(req, res, () => {
+    if (req.user.role != 'seller') {
+      return next(new HttpException(401, 'Unauthorized, you are not seller!'));
     }
     return next();
   });

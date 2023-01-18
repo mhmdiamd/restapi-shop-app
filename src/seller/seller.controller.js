@@ -1,3 +1,4 @@
+import { clearRedisCache, setOrGetCache } from '../../Config/redis.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
 import SellerModel from './seller.model.js';
@@ -8,7 +9,10 @@ class SellerController {
   // Get all Seller
   getAllSeller = async (req, res, next) => {
     try {
-      const sellers = await this.#sellerModel.getAllSeller();
+      const sellers = await setOrGetCache(`api/v1/sellers`, async () => {
+        return await this.#sellerModel.getAllSeller();
+      });
+
       successResponse(res, 200, 'Get all Sellers success!', sellers);
     } catch (err) {
       next(new HttpException(err.status, err.message));
@@ -19,7 +23,9 @@ class SellerController {
   getSellerById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const seller = await this.#sellerModel.getSellerById(id);
+      const seller = await setOrGetCache(`api/v1/sellers/${id}`, async () => {
+        return await this.#sellerModel.getSellerById(id);
+      });
       successResponse(res, 200, `Get seller with ID ${id} success!`, seller);
     } catch (err) {
       next(new HttpException(err.status, err.message));
@@ -31,11 +37,8 @@ class SellerController {
     const { id } = req.params;
     try {
       await this.#sellerModel.deleteSellerById(id);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 200,
-        message: 'Seller Deleted',
-      });
+      successResponse(res, 200, 'Seller success deleted!', { mesage: 'Seller deleted!' });
+      await clearRedisCache(`api/v1/sellers/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }

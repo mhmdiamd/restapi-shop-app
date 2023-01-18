@@ -8,9 +8,10 @@ import SellerAuthRouter from './src/auth/seller/seller-auth.routes.js';
 import BuyerAuthRouter from './src/auth/buyer/buyer-auth.routes.js';
 import BuyerRouter from './src/buyer/buyer.routes.js';
 import CartRouter from './src/cart/cart.routes.js';
+import TokenRouter from './src/auth/token/token.routes.js';
 
 dotenv.config();
 process.setMaxListeners(0);
+const app = new App([new ProductRouter(), new CategoryRouter(), new AuthRouter(), new UserRouter(), new SellerAuthRouter(), new BuyerAuthRouter(), new BuyerRouter(), new CartRouter(), new TokenRouter()], 3000);
 
-const app = new App([new ProductRouter(), new CategoryRouter(), new AuthRouter(), new UserRouter(), new SellerAuthRouter(), new BuyerAuthRouter(), new BuyerRouter(), new CartRouter()], 3000);
 app.listen();

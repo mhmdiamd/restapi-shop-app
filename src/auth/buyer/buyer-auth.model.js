@@ -1,13 +1,14 @@
 import { dbRepo } from '../../../Config/db.config.js';
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import bcrypt from 'bcryptjs';
+import { randomUUID } from 'crypto';
 
 class BuyerModel {
   #buyerRepository = dbRepo;
 
   // Auth Register
   register = async ({ name, email, password }) => {
-    const query = `INSERT INTO buyers VALUES(DEFAULT, '${name}', '${email}', '${password}', 'buyer', null, null, null, null, 'photodefault.jpg')`;
+    const query = `INSERT INTO buyers VALUES('${randomUUID()}', '${name}', '${email}', '${password}', DEFAULT, null, null, null, null, DEFAULT)`;
     const buyerRegister = await this.#buyerRepository.query(query);
     return buyerRegister.rows;
   };

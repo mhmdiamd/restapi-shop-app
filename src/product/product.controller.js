@@ -90,7 +90,6 @@ class ProductController {
     const photo = req.file;
     // Create file name
     const photoUrl = `${process.env.HOST}:${process.env.PORT}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
-    console.log(photoUrl);
     // Get Id user login
     const { id } = req.params;
     // merge data before send to model
@@ -100,7 +99,6 @@ class ProductController {
       await this.#productModel.updateProductById(id, data);
 
       successResponse(res, 200, `Success Update Product with ID ${id}`, { message: 'Product Updated' });
-      // client.client.setEx(`api/v1/products/${id}`, 60 * 60, JSON.stringify(data));
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { registerSchema } from '../auth.validation.js';
-import BuyerAuthController from './buyer-auth..controller.js';
+import BuyerAuthController from './buyer-auth.controller.js';
 
 class BuyerAuthRouter extends BuyerAuthController {
   path = '/auth/buyers';
