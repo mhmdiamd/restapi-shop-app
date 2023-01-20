@@ -2,6 +2,7 @@ import { dbRepo } from '../../../Config/db.config.js';
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
+import { sendEmailActivation } from '../../../Config/nodemailer.config.js';
 
 class SellerModel {
   #authRepository = dbRepo;

@@ -13,6 +13,7 @@ class TokenRouter {
 
   #initialiseRouter() {
     this.router.post(`${this.path}`, authCheck, isYourCredentials, getNewToken);
+
   }
 }
 

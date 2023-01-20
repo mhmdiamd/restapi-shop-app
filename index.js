@@ -14,4 +14,5 @@ dotenv.config();
 process.setMaxListeners(0);
 const app = new App([new ProductRouter(), new CategoryRouter(), new AuthRouter(), new UserRouter(), new SellerAuthRouter(), new BuyerAuthRouter(), new BuyerRouter(), new CartRouter(), new TokenRouter()], 3000);
 
+
 app.listen();

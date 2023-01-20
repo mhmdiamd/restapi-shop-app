@@ -43,10 +43,11 @@ class SellerModel {
     await this.getSellerById(id);
 
     const { name, gender, phone, birth_date, address, photo } = data;
-    const query = `UPDATE sellers SET name='${name}', phone='${phone}', birth_date=${`${birth_date}` || null}, gender=${gender ? `'${gender}'` : `DEFAULT`}, address='${address}', photo='${photo}' WHERE id = '${id}'`;
+    const query = `UPDATE sellers SET name='${name}', phone='${phone}', birth_date=${`${birth_date}` || null}, gender=${`'${gender}'` || null}, address='${address}', photo='${photo}' WHERE id = '${id}'`;
     const updatedUser = await this.#DB.query(query);
+    console.log(updatedUser);
 
-    return updatedUser.rows;
+    return await this.getSellerById(id);
   };
 }
 

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { registerSchema } from '../auth.validation.js';
 import SellerAuthController from './seller-auth.controller.js';
 import multer from 'multer';
+import { sellerEmailActivation } from '../emailActivation.js';
 
 class SellerAuthRouter extends SellerAuthController {
   path = '/auth/sellers';
@@ -20,8 +21,8 @@ class SellerAuthRouter extends SellerAuthController {
     // get single category Route
     this.router.post(`${this.path}/login`, this.login);
 
-    // Get Refresh Token
-    // this.router.post(`/auth/refresh-token`, authCheck, getNewToken);
+    // User Verification
+    this.router.get(`/sellers/verification/:token`, sellerEmailActivation);
   }
 }
 

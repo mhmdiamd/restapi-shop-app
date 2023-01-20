@@ -1,33 +1,22 @@
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import SellerModel from './seller-auth.model.js';
-import bcrypt from 'bcryptjs';
 import { generateRefreshToken, generateToken } from '../token.js';
 import { createRefreshToken } from '../token/token.service.js';
-// import { successResponse } from '../../utils/Helpers/response.js';
+import { sendEmailActivation } from '../../../Config/nodemailer.config.js';
+import { successResponse } from '../../utils/Helpers/response.js';
 
 class SellerAuthController {
   #sellerModel = new SellerModel();
 
   // User Register
   register = async (req, res, next) => {
-    const userPassword = req.user.password;
-
-    // Hasing password
-    var salt = bcrypt.genSaltSync(10);
-    var password = bcrypt.hashSync(userPassword, salt);
-
-    const user = { ...req.user, password };
-    console.log(user);
-    try {
-      await this.#sellerModel.register(user);
-      res.status(200).json({
-        status: 'success',
-        statusCode: 201,
-        message: 'Register success!',
+    sendEmailActivation(req.user, 'sellers')
+      .then((response) => {
+        successResponse(res, 200, 'Check your email for activation email!', {});
+      })
+      .catch((err) => {
+        next(new HttpException(500, err.message));
       });
-    } catch (err) {
-      next(new HttpException(err.status, err.message));
-    }
   };
 
   // User Login

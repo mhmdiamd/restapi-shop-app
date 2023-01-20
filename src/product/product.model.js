@@ -128,7 +128,6 @@ class ProductModel {
     const { product_name, price, color, size, stock, description, id_category, photo } = data;
     const query = `UPDATE products SET product_name='${product_name}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}', id_category=${id_category}, photo='${photo}' WHERE id = '${id}'`;
 
-    
     const updatedProduct = await this.#productRepository.query(query);
     // Delete old Photo when photo was updated!
     if (updatedProduct && photo) {

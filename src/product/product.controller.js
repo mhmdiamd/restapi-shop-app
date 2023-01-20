@@ -1,10 +1,11 @@
 import ProductModel from './product.model.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from './../utils/Helpers/response.js';
-import { clearRedisCache, setOrGetCache } from '../../Config/redis.js';
+import { clearRedisCache, setOrGetCache } from '../../Config/redis.config.js';
 
 class ProductController {
   #productModel = new ProductModel();
+  #ENDPOINT = `api/v1/products`;
 
   // Get all Product
   getAllProduct = async (req, res, next) => {
@@ -55,8 +56,15 @@ class ProductController {
   createProduct = async (req, res, next) => {
     // Get File
     const photo = req.file;
+
+    if (!photo) {
+      return res.status(403).send({
+        status: 'failed',
+        message: 'Please input the photo',
+      });
+    }
     // Create file name
-    const photoUrl = `${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
+    const photoUrl = `http://${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
     // Get Id user login
     const { id } = req.user;
     // merge data before send to model
@@ -78,7 +86,7 @@ class ProductController {
       await this.#productModel.deleteProductById(id);
       // Success Response
       successResponse(res, 200, 'Success created Product!', { message: 'Product Deleted' });
-      await clearRedisCache(`api/v1/products/${id}`);
+      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -88,15 +96,19 @@ class ProductController {
   updateProductById = async (req, res, next) => {
     // Get File
     const photo = req.file;
+
     // Create file name
-    const photoUrl = `${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
+    const photoUrl = `http://${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
     // Get Id user login
     const { id } = req.params;
     // merge data before send to model
     const data = { ...req.body, id_seller: id, photo: photoUrl };
 
     try {
-      await this.#productModel.updateProductById(id, data);
+      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
+      await setOrGetCache(`${this.#ENDPOINT}/${id}`, async () => {
+        await this.#productModel.updateProductById(id, data);
+      });
 
       successResponse(res, 200, `Success Update Product with ID ${id}`, { message: 'Product Updated' });
     } catch (err) {

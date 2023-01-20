@@ -6,12 +6,12 @@ class BuyerModel {
 
   // Get All Buyer Service
   getAllBuyer = async () => {
-    let query = 'SELECT id, name, phone, email, address gender, birth_date, role, photo FROM buyers';
+    let query = 'SELECT id, name, phone, email, address, gender, birth_date, role, photo FROM buyers';
     const buyers = await this.#DB.query(query);
 
     // Error if buyers id not found!
     if (buyers.rowCount == 0) {
-      throw new HttpException(404, `Categories not found!`);
+      throw new HttpException(404, `Buyers not found!`);
     }
 
     return buyers.rows;
@@ -32,7 +32,7 @@ class BuyerModel {
   // Delete User
   deleteBuyerById = async (id) => {
     await this.getBuyerById(id);
-    const query = `DELETE FROM buyers WHERE id = ${id}`;
+    const query = `DELETE FROM buyers WHERE id = '${id}'`;
     const deletedBuyer = await this.#DB.query(query);
 
     return deletedBuyer.rows;
@@ -45,15 +45,15 @@ class BuyerModel {
     const { name, gender, phone, birth_date, address, photo } = data;
     const query = `UPDATE buyers SET 
     name='${name}', 
-    phone=${phone ? phone : null}, 
-    birth_date='${birth_date}', 
-    gender='${gender || 'man'}', 
+    phone=${phone ? `'${phone}'` : null}, 
+    birth_date=${`${birth_date}` || null}, 
+    gender=${`'${gender}'` || null}, 
     address=${address ? address : null}, 
-    photo='${photo}' 
+    photo='${photo}'
     WHERE id = '${id}'`;
     const updatedBuyer = await this.#DB.query(query);
 
-    return updatedBuyer.rows;
+    return await this.getBuyerById(id);
   };
 }
 

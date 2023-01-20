@@ -1,29 +1,22 @@
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import BuyerModel from './buyer-auth.model.js';
-import bcrypt from 'bcryptjs';
 import { generateRefreshToken, generateToken } from '../token.js';
 import { successResponse } from '../../utils/Helpers/response.js';
 import { createRefreshToken } from '../token/token.service.js';
-import { token } from 'morgan';
+import { sendEmailActivation } from './../../../Config/nodemailer.config.js';
 
 class BuyerAuthController {
   #buyerModel = new BuyerModel();
 
   // User Register
   register = async (req, res, next) => {
-    const userPassword = req.user.password;
-
-    // Hasing password
-    var salt = bcrypt.genSaltSync(10);
-    var password = bcrypt.hashSync(userPassword, salt);
-
-    const user = { ...req.user, password };
-    try {
-      await this.#buyerModel.register(user);
-      successResponse(res, 200, 'Register Success please Login!', { message: 'Register success!' });
-    } catch (err) {
-      next(new HttpException(err.status, err.message));
-    }
+    sendEmailActivation(req.user, 'buyers')
+      .then((response) => {
+        successResponse(res, 200, 'Check your email for activation email!', {});
+      })
+      .catch((err) => {
+        next(new HttpException(500, err.message));
+      });
   };
 
   // User Login

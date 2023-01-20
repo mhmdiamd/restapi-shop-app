@@ -15,7 +15,6 @@ export function setOrGetCache(key, cb) {
       console.log('Hit From redis');
       return resolve(JSON.parse(dataCache));
     }
-
     cb()
       .then((res) => {
         redisClient.set(key, JSON.stringify(res), 'ex', 180);
