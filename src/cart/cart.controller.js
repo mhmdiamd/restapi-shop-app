@@ -32,23 +32,30 @@ class CartController {
   };
 
   // Get Cart By Id
-  getCartByIdBuyer = async (req, res, next) => {
-    const { id_buyer } = req.params;
+  getCartByIdCustomer = async (req, res, next) => {
+    const { id } = req.params;
     try {
-      const carts = await this.#cartModel.getCartByIdBuyer(id_buyer);
-      successResponse(res, 200, `Success get cart with ID Buyer ${id_buyer}`, carts);
+      if (id != 'undefined') {
+        const carts = await this.#cartModel.getCartByIdCustomer(id);
+        successResponse(res, 200, `Success get cart with ID Buyer ${id}`, carts);
+      } else {
+        const carts = await this.#cartModel.getCartByIdCustomer(req.user.id);
+        successResponse(res, 200, `Success get cart with ID Buyer ${req.user.id}`, carts);
+      }
     } catch (err) {
+      console.log(err);
       next(new HttpException(err.status, err.message));
     }
   };
 
   // Create Cart
   createCart = async (req, res, next) => {
-    const data = { ...req.body, id_buyer: req.user.id };
+    const data = { ...req.body, id_customer: req.user.id };
     try {
       await this.#cartModel.createCart(data);
       successResponse(res, 200, `Success create cart!`, { messgae: 'Cart was created!' });
     } catch (err) {
+      console.log(err);
       next(new HttpException(err.status, err.message));
     }
   };
@@ -59,6 +66,18 @@ class CartController {
     try {
       await this.#cartModel.deleteCartById(id);
       successResponse(res, 200, `Success updated cart with ID ${id}`, { message: 'Cart Updated!' });
+    } catch (err) {
+      next(new HttpException(err.status, err.message));
+    }
+  };
+
+  // Delete Cart By Id Customer
+  deleteCartByIdCustomer = async (req, res, next) => {
+    const { id } = req.user;
+    console.log('tes');
+    try {
+      await this.#cartModel.deleteCartByIdCustomer(id);
+      successResponse(res, 200, `Success delete cart with ID Customer ${id}`, { message: 'Cart delete!' });
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }

@@ -2,11 +2,11 @@ import jwt from 'jsonwebtoken';
 import SellerModel from './seller/seller-auth.model.js';
 import bcrypt from 'bcryptjs';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
-import BuyerModel from './buyer/buyer-auth.model.js';
+import CustomerAuthModel from './customer/customer-auth.model.js';
 import { successResponse } from '../utils/Helpers/response.js';
 
 const sellerModel = new SellerModel();
-const buyerModel = new BuyerModel();
+const customerAuthModel = new CustomerAuthModel();
 
 export const sellerEmailActivation = async (req, res, next) => {
   const { token } = req.params;
@@ -42,7 +42,7 @@ export const buyerEmailActivation = async (req, res, next) => {
       var password = bcrypt.hashSync(user.password, salt);
       user = { ...user, password };
 
-      await buyerModel.register(user);
+      await customerAuthModel.register(user);
 
       successResponse(res, 201, 'Register success!', {});
     } catch (err) {

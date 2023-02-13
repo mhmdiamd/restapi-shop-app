@@ -7,9 +7,9 @@ class CartModel {
 
   // Get All Cart Service
   getAllCart = async () => {
-    let query = `SELECT carts.*,products.product_name, buyers.name as buyer_name, buyers.email FROM carts 
+    let query = `SELECT carts.*,products.product_name, customers.name as buyer_name, customers.email FROM carts 
       INNER JOIN products ON carts.id_product = products.id
-      INNER JOIN buyers ON carts.id_buyer = buyers.id`;
+      INNER JOIN customers ON carts.id_customer = customers.id`;
     const carts = await this.#DB.query(query);
 
     // Error if Cart id not found!
@@ -22,9 +22,9 @@ class CartModel {
 
   // Get single Cart
   getCartById = async (id) => {
-    const query = `SELECT carts.*,products.product_name, buyers.name as buyer_name, buyers.email FROM carts 
+    const query = `SELECT carts.*,products.product_name, customers.name as buyer_name, customers.email FROM carts 
     INNER JOIN products ON carts.id_product = products.id
-    INNER JOIN buyers ON carts.id_buyer = buyers.id
+    INNER JOIN customers ON carts.id_customer = customers.id
     WHERE carts.id='${id}'`;
 
     const cart = await this.#DB.query(query);
@@ -36,15 +36,16 @@ class CartModel {
   };
 
   // Get cart by id buyer
-  getCartByIdBuyer = async (id_buyer) => {
-    const query = `SELECT carts.*,products.product_name, buyers.name as buyer_name, buyers.email FROM carts 
+  getCartByIdCustomer = async (id_customer) => {
+    const query = `SELECT carts.*,products.product_name, products.photo as photo_product, customers.name as customer_name, sellers.store_name as store_name, products.price, customers.email FROM carts 
     INNER JOIN products ON carts.id_product = products.id
-    INNER JOIN buyers ON carts.id_buyer = buyers.id
-    WHERE carts.id_buyer='${id_buyer}'`;
+    INNER JOIN sellers ON products.id_seller = sellers.id
+    INNER JOIN customers ON carts.id_customer = customers.id
+    WHERE carts.id_customer='${id_customer}'`;
 
     const carts = await this.#DB.query(query);
     if (carts.rowCount == 0) {
-      throw new HttpException(404, `Cart with ID Buyer ${id} is not found!`);
+      throw new HttpException(404, `Cart with ID Customer ${id_customer} is not found!`);
     }
 
     return carts.rows;
@@ -52,16 +53,37 @@ class CartModel {
 
   // Create Cart
   createCart = async (data) => {
-    const { id_buyer, id_product, quantity } = data;
-    const query = `INSERT INTO carts VALUES('${randomUUID()}', '${id_buyer}', '${id_product}', ${quantity || 1})`;
-    const cart = await this.#DB.query(query);
-    return cart.rows;
+    const findProduct = await this.getCartByIdCustomer(data.id_customer)
+      .then((res) => res.find((cart) => cart.id_product == data.id_product && cart.color == data.color && cart.size == data.size))
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => console.log(err));
+
+    if (findProduct) {
+      const updateCart = await this.updateCartById(findProduct.id, { quantity: findProduct.quantity + data.quantity });
+      return updateCart;
+    } else {
+      const { id_customer, id_product, quantity, size, color } = data;
+      const query = `INSERT INTO carts VALUES('${randomUUID()}', '${id_customer}', '${id_product}', ${quantity || 1}, '${size}', '${color}' )`;
+      const cart = await this.#DB.query(query);
+      return cart.rows;
+    }
   };
 
   // Delete Cart
   deleteCartById = async (id) => {
     await this.getCartById(id);
     const query = `DELETE FROM carts WHERE id = '${id}'`;
+    const deletedCart = await this.#DB.query(query);
+    return deletedCart.rows;
+  };
+
+  // Delete Cart By Id Customer
+  deleteCartByIdCustomer = async (id) => {
+    console.log(`tes`, id);
+    await this.getCartByIdCustomer(id);
+    const query = `DELETE FROM carts WHERE id_customer = '${id}'`;
     const deletedCart = await this.#DB.query(query);
     return deletedCart.rows;
   };

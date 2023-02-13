@@ -1,11 +1,11 @@
 import ProductModel from './product.model.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from './../utils/Helpers/response.js';
-import { clearRedisCache, setOrGetCache } from '../../Config/redis.config.js';
+import { updatePhoto } from '../../Config/googleDrive.config.js';
+import { deletePhotoCloudinary, uploadPhotoCloudinary } from '../../Config/cloudinary.config.js';
 
 class ProductController {
   #productModel = new ProductModel();
-  #ENDPOINT = `api/v1/products`;
 
   // Get all Product
   getAllProduct = async (req, res, next) => {
@@ -27,9 +27,11 @@ class ProductController {
   getProductById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const product = await setOrGetCache(`api/v1/products/${id}`, async () => {
-        return await this.#productModel.getProductById(id);
-      });
+      // const product = await setOrGetCache(`api/v1/products/${id}`, async () => {
+      //   return await this.#productModel.getProductById(id);
+      // });
+
+      const product = await this.#productModel.getProductById(id);
 
       successResponse(res, 200, 'Success get all Product!', product);
     } catch (err) {
@@ -40,13 +42,32 @@ class ProductController {
   // Get Product By Id Seller
   getProductByIdSeller = async (req, res, next) => {
     const { id } = req.params;
+    const user = req.user;
     try {
-      const product = await setOrGetCache(`api/v1/products/${id}/sellers`, async () => {
-        return await this.#productModel.getProductByIdSeller(id);
-      });
+      if (id != 'undefined') {
+        const product = await this.#productModel.getProductByIdSeller(id);
+        successResponse(res, 200, `Success get Products with id seller ${id}!`, product);
+      }
+
+      const product = await this.#productModel.getProductByIdSeller(user.id);
+      successResponse(res, 200, `Success get Products with id seller ${user.id}!`, product);
 
       // Success Response
-      successResponse(res, 200, `Success get Products with id seller ${id}!`, product);
+    } catch (err) {
+      next(new HttpException(err.status, err.message));
+    }
+  };
+
+  // Get Product By Id Seller
+  getProductByIdCategory = async (req, res, next) => {
+    const { id } = req.params;
+    try {
+      // const product = await setOrGetCache(`api/v1/products/${id}/sellers`, async () => {
+      //   return await this.#productModel.getProductByIdSeller(id);
+      // });
+      const product = await this.#productModel.getProductByIdCategory(id);
+      // Success Response
+      successResponse(res, 200, `Success get Products with id category ${id}!`, product);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -63,12 +84,16 @@ class ProductController {
         message: 'Please input the photo',
       });
     }
+
+    // Upload to Google Drive
+    const uploadPhoto = await uploadPhotoCloudinary(photo.path);
+
     // Create file name
-    const photoUrl = `http://${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
+    const photoUrl = uploadPhoto.secure_url;
     // Get Id user login
-    const { id } = req.user;
+    const { id, store_name } = req.user;
     // merge data before send to model
-    const data = { ...req.body, id_seller: id, photo: photoUrl };
+    const data = { ...req.body, id_seller: id, store_name, photo: photoUrl };
 
     try {
       await this.#productModel.createProduct(data);
@@ -86,7 +111,7 @@ class ProductController {
       await this.#productModel.deleteProductById(id);
       // Success Response
       successResponse(res, 200, 'Success created Product!', { message: 'Product Deleted' });
-      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
+      // await clearRedisCache(`${this.#ENDPOINT}/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -95,23 +120,38 @@ class ProductController {
   // Update Product By Id
   updateProductById = async (req, res, next) => {
     // Get File
-    const photo = req.file;
 
-    // Create file name
-    const photoUrl = `http://${process.env.HOST}${process.env.PRODUCT_UPLOAD_DIR}${photo.filename}`;
     // Get Id user login
     const { id } = req.params;
-    // merge data before send to model
-    const data = { ...req.body, id_seller: id, photo: photoUrl };
 
+    let photo = '';
+    let photoUrl = undefined;
+
+    // merge data before send to model
     try {
-      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
-      await setOrGetCache(`${this.#ENDPOINT}/${id}`, async () => {
-        await this.#productModel.updateProductById(id, data);
-      });
+      if (req.file) {
+        photo = req.file;
+        const oldProduct = await this.#productModel.getProductById(id);
+
+        const uploadPhoto = await uploadPhotoCloudinary(photo.path);
+        photoUrl = uploadPhoto.secure_url;
+        if (updatePhoto) {
+          const photoLength = oldProduct.photo.split('/').length;
+          const idFile = oldProduct.photo.split('/')[photoLength - 1].split('.')[0];
+          await deletePhotoCloudinary(idFile);
+        }
+      }
+
+      const data = { ...req.body, id_seller: id, photo: photoUrl };
+
+      // await clearRedisCache(`${this.#ENDPOINT}/${id}`);
+      // await setOrGetCache(`${this.#ENDPOINT}/${id}`, async () => {
+      await this.#productModel.updateProductById(id, data);
+      // });
 
       successResponse(res, 200, `Success Update Product with ID ${id}`, { message: 'Product Updated' });
     } catch (err) {
+      console.log(err);
       next(new HttpException(err.status, err.message));
     }
   };

@@ -28,6 +28,7 @@ class SellerAuthController {
 
       res.cookie('access_token', accessToken, {
         httpOnly: true,
+        maxAge: (1 / 2) * 60 * 60 * 1000,
       });
 
       await createRefreshToken(refreshToken);
@@ -36,8 +37,7 @@ class SellerAuthController {
         statusCode: 200,
         message: 'Login success!',
         data: userLogin,
-        accessToken,
-        refreshToken,
+        token: refreshToken,
       });
     } catch (err) {
       next(new HttpException(err.status, err.message));

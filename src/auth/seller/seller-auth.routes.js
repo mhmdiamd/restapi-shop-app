@@ -3,6 +3,8 @@ import { registerSchema } from '../auth.validation.js';
 import SellerAuthController from './seller-auth.controller.js';
 import multer from 'multer';
 import { sellerEmailActivation } from '../emailActivation.js';
+import { authCheck } from '../../utils/Middlewares/auth.middleware.js';
+import { getMyData } from '../token/token.controller.js';
 
 class SellerAuthRouter extends SellerAuthController {
   path = '/auth/sellers';

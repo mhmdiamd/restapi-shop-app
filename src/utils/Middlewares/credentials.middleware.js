@@ -4,7 +4,8 @@ import HttpException from '../Exceptions/http.exceptions.js';
 
 export function isYourCredentials(req, res, next) {
   const accessToken = req.user;
-  checkTokenInDB(req.body.token)
+  const token = req.headers.authorization?.split(' ')[1];
+  checkTokenInDB(token)
     .then((response) => response[0].token)
     .then((refreshToken) => {
       jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, payload) => {

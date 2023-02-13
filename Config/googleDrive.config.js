@@ -9,22 +9,60 @@ const SCOPES = [
   'https://www.googleapis.com/auth/drive.metadata',
 ];
 
-const auth = new google.auth.GoogleAuth({
-  keyFile: '../credentials.json',
+// export async function unlockFolder() {
+//   try {
+//     const zip = new AdmZip('./credentials.zip');
+//     console.log('tes');
+//     zip.getEntries().forEach((entry) => {
+//       entry.password = 'ilhamgoogledrive';
+//     });
+//     zip.extractAllTo('/', true);
+//     console.log('The ZIP file has been extracted successfully.');
+//     return true;
+//   } catch (err) {
+//     console.error(err);
+//     return false;
+//   }
+// }
+
+// fs.stat(
+//   './credentials.json',
+//   (err,
+//   (stats) => {
+//     if (err.code === 'ENOENT') {
+//       console.error('The file does not exist.');
+//       if (unlockFolder()) {
+//         return {
+//           keyFile: './credentials.json',
+//           scopes: SCOPES,
+//         };
+//       }
+//     } else {
+//       console.error(err);
+//       return err;
+//     }
+//   })
+// );
+
+export const auth = new google.auth.GoogleAuth({
+  keyFile: './credentials.json',
   scopes: SCOPES,
 });
 
-async function createAndUpload(auth) {
-  const driveService = google.drive({ version: 'v3', auth });
+export async function createAndUpload(auth, photo) {
+  const driveService = google.drive({
+    version: 'v3',
+    auth: auth,
+  });
 
   const fileMetaData = {
-    name: 'js.png',
+    name: photo.filename,
     parents: ['1ySvzVte_BhCmGBTQy5Q1kiyrlk-dUwT1'],
   };
 
   const media = {
     mimeType: 'image/png',
-    body: fs.createReadStream('js.png'),
+    body: fs.createReadStream(photo.path),
   };
 
   let response = await driveService.files.create({
@@ -33,44 +71,28 @@ async function createAndUpload(auth) {
     fields: 'id',
   });
 
-  switch (response.status) {
-    case 200:
-      console.log('file created id : ', response.data.id);
-      break;
-    default:
-      console.error('Error creating file : ', response.errors);
-      break;
-  }
+  return response.data;
 }
 
-async function deletePhoto(auth) {
+export async function deletePhoto(auth, id) {
   const driveService = google.drive({ version: 'v3', auth });
-  return new Promise((resolve, reject) => {
-    const response = driveService.files.delete({
-      fileId: '1k3Ni4XOtu6PrjBufhhUwgfcX8yCl6VMG',
-    });
-
-    if (!response) {
-      reject(response);
-    }
-    resolve(response);
+  const response = driveService.files.delete({
+    fileId: id,
   });
+
+  return response.data;
 }
 
-async function updatePhoto(auth) {
+export async function updatePhoto(auth, photo, idPhoto) {
   const driveService = google.drive({ version: 'v3', auth });
   return new Promise((resolve, reject) => {
-    const fileMetaData = {
-      name: 'myphoto.png',
-      parents: ['1ySvzVte_BhCmGBTQy5Q1kiyrlk-dUwT1'],
-    };
     const media = {
       mimeType: 'image/png',
-      body: fs.createReadStream('myphoto.png'),
+      body: fs.createReadStream(photo.path),
     };
 
     const response = driveService.files.update({
-      fileId: '1cPPf0KaclMxZt5jN3bc4Wq7GDFmmMWoH',
+      fileId: idPhoto,
       media: media,
       fields: 'id',
     });
@@ -82,9 +104,9 @@ async function updatePhoto(auth) {
   });
 }
 
-createAndUpload(auth)
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+// createAndUpload(auth)
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));
 
 // updatePhoto(auth)
 //   .then((res) => {
@@ -98,7 +120,6 @@ createAndUpload(auth)
 
 // deletePhoto(auth)
 //   .then((res) => {
-//     console.log('Success deleted!');
 //     console.log(res.data.id);
 //   })
 //   .catch((err) => console.log(err));

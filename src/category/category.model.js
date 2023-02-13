@@ -60,8 +60,8 @@ class CategoryModel {
   };
 
   // Create category
-  createCategory = async ({ name }) => {
-    const query = `INSERT INTO categories VALUES(DEFAULT, '${name}')`;
+  createCategory = async ({ name, photo, background_color }) => {
+    const query = `INSERT INTO categories VALUES(DEFAULT, '${name}', '${photo}', '${background_color}')`;
     const categories = await this.#categoriesRepository.query(query);
     return categories.rows;
   };

@@ -6,7 +6,7 @@ class SellerModel {
 
   // Get All Sellers Service
   getAllSeller = async () => {
-    let query = 'SELECT id, name, phone, email, address, gender, birth_date, role, photo FROM sellers';
+    let query = 'SELECT id, phone, store_name, photo, description FROM sellers';
     const sellers = await this.#DB.query(query);
 
     // Error if sellers id not found!
@@ -19,7 +19,7 @@ class SellerModel {
 
   // Get single User
   getSellerById = async (id) => {
-    const query = `SELECT id, name, email,phone, address, birth_date, gender, photo FROM sellers WHERE id = '${id}'`;
+    const query = `SELECT id, name, email,phone, store_name, address, photo, description FROM sellers WHERE id = '${id}'`;
 
     const seller = await this.#DB.query(query);
     if (seller.rowCount == 0) {
@@ -42,8 +42,8 @@ class SellerModel {
   updateSellerById = async (id, data) => {
     await this.getSellerById(id);
 
-    const { name, gender, phone, birth_date, address, photo } = data;
-    const query = `UPDATE sellers SET name='${name}', phone='${phone}', birth_date=${`${birth_date}` || null}, gender=${`'${gender}'` || null}, address='${address}', photo='${photo}' WHERE id = '${id}'`;
+    const { name, description, phone, address, photo, store_name } = data;
+    const query = `UPDATE sellers SET name='${name}', phone='${phone}',  description=${description ? `'${description}'` : ''}, address='${address}',store_name='${store_name}', photo='${photo}' WHERE id = '${id}'`;
     const updatedUser = await this.#DB.query(query);
     console.log(updatedUser);
 

@@ -22,11 +22,14 @@ class SellerController {
   getSellerById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      const seller = await setOrGetCache(`${this.ENDPOINT}/${id}`, async () => {
-        return await this.#sellerModel.getSellerById(id);
-      });
+      // const seller = await setOrGetCache(`${this.ENDPOINT}/${id}`, async () => {
+      //   return await this.#sellerModel.getSellerById(id);
+      // });
+
+      const seller = await this.#sellerModel.getSellerById(id);
       successResponse(res, 200, `Get seller with ID ${id} success!`, seller);
     } catch (err) {
+      console.log(err);
       next(new HttpException(err.status, err.message));
     }
   };
@@ -46,13 +49,16 @@ class SellerController {
   // Update Seller By Id
   updateSellerById = async (req, res, next) => {
     const { id } = req.params;
-    const data = req.body;
+    const photo = req.file;
     try {
-      await clearRedisCache(`${this.ENDPOINT}/${id}`);
+      // Create file name
+      const photoUrl = `${process.env.HOST}${process.env.SELLER_PROFILE_UPLOAD_DIR}${photo.filename}`;
+      const data = { ...req.body, photo: photoUrl };
+      // await clearRedisCache(`${this.ENDPOINT}/${id}`);
       const seller = await this.#sellerModel.updateSellerById(id, data);
-      await setOrGetCache(`${this.ENDPOINT}/${id}`, async () => {
-        return seller;
-      });
+      // await setOrGetCache(`${this.ENDPOINT}/${id}`, async () => {
+      //   return seller;
+      // });
       successResponse(res, 200, `Success updated seller with id ${id}`, { message: `Seller Updated!` });
     } catch (err) {
       next(new HttpException(err.status, err.message));

@@ -3,20 +3,20 @@ import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import bcrypt from 'bcryptjs';
 import { randomUUID } from 'crypto';
 
-class BuyerModel {
-  #buyerRepository = dbRepo;
+class CustomerModel {
+  #customerRepository = dbRepo;
 
   // Auth Register
   register = async ({ name, email, password }) => {
-    const query = `INSERT INTO buyers VALUES('${randomUUID()}', '${name}', '${email}', '${password}', DEFAULT, null, null, null, null, DEFAULT)`;
-    const buyerRegister = await this.#buyerRepository.query(query);
-    return buyerRegister.rows;
+    const query = `INSERT INTO customers VALUES('${randomUUID()}', '${name}', '${email}', '${password}', null, null, null,null, DEFAULT, DEFAULT)`;
+    const customerRegister = await this.#customerRepository.query(query);
+    return customerRegister.rows;
   };
 
   // Login
   login = async (data) => {
-    const queryFindEmail = `SELECT * FROM buyers WHERE email='${data.email}'`;
-    const findEmail = await this.#buyerRepository.query(queryFindEmail);
+    const queryFindEmail = `SELECT * FROM customers WHERE email='${data.email}'`;
+    const findEmail = await this.#customerRepository.query(queryFindEmail);
 
     if (findEmail.rowCount == 0) {
       throw new HttpException(401, 'Unauthenticated');
@@ -31,4 +31,4 @@ class BuyerModel {
   };
 }
 
-export default BuyerModel;
+export default CustomerModel;

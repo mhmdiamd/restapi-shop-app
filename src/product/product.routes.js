@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import ProductController from './product.controller.js';
-// import { productSchema } from './product.validation.js';
 import { authCheck, isSeller, isYourPoduct } from './../utils/Middlewares/auth.middleware.js';
-import { multerStorage, productStorage } from '../../Config/multer.config.js';
+import { multerStorage } from '../../Config/multer.config.js';
+// import { productSchema } from './product.validation.js';
+import { useStorage } from './../../Config/multer.config.js';
 
 class ProductRouter extends ProductController {
   path = '/products';
   router = Router();
-  upload = multerStorage(productStorage);
-  // upload = multer({ dest: '../../Public/uploads/products' });
+  upload = multerStorage(useStorage('Products'));
 
   constructor() {
     // running Router
@@ -25,16 +25,19 @@ class ProductRouter extends ProductController {
     this.router.get(`${this.path}/:id`, this.getProductById);
 
     // Get product by id Seller Router
-    this.router.get(`${this.path}/:id/sellers`, this.getProductByIdSeller);
+    this.router.get(`${this.path}/:id/sellers`, authCheck, this.getProductByIdSeller);
+
+    // Get product by id Category Router
+    this.router.get(`${this.path}/categories/:id`, this.getProductByIdCategory);
 
     // Create Product Router
     this.router.post(`${this.path}/`, authCheck, isSeller, this.upload.single('photo'), this.createProduct);
 
     // Delete Product Router
-    this.router.delete(`${this.path}/:id`, this.deleteProductById);
+    this.router.delete(`${this.path}/:id`, authCheck, this.deleteProductById);
 
     // Update Product Router
-    this.router.put(`${this.path}/:id`, authCheck, isYourPoduct, this.upload.single('photo'), this.updateProductById);
+    this.router.put(`${this.path}/:id`, authCheck, isSeller, this.upload.single('photo'), this.updateProductById);
   }
 }
 

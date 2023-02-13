@@ -1,16 +1,16 @@
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
-import BuyerModel from './buyer-auth.model.js';
+import CustomerModel from './customer-auth.model.js';
 import { generateRefreshToken, generateToken } from '../token.js';
 import { successResponse } from '../../utils/Helpers/response.js';
 import { createRefreshToken } from '../token/token.service.js';
-import { sendEmailActivation } from './../../../Config/nodemailer.config.js';
+import { sendEmailActivation } from '../../../Config/nodemailer.config.js';
 
-class BuyerAuthController {
-  #buyerModel = new BuyerModel();
+class CustomerAuthController {
+  #customerModel = new CustomerModel();
 
   // User Register
   register = async (req, res, next) => {
-    sendEmailActivation(req.user, 'buyers')
+    sendEmailActivation(req.user, 'customers')
       .then((response) => {
         successResponse(res, 200, 'Check your email for activation email!', {});
       })
@@ -22,12 +22,13 @@ class BuyerAuthController {
   // User Login
   login = async (req, res, next) => {
     try {
-      const userLogin = await this.#buyerModel.login(req.body);
+      const userLogin = await this.#customerModel.login(req.body);
       const accessToken = generateToken(userLogin);
       const refreshToken = generateRefreshToken(userLogin);
 
       res.cookie('access_token', accessToken, {
         httpOnly: true,
+        maxAge: (1 / 2) * 60 * 60 * 1000,
       });
 
       await createRefreshToken(refreshToken);
@@ -36,13 +37,13 @@ class BuyerAuthController {
         statusCode: 200,
         message: 'Login success!',
         data: userLogin,
-        accessToken,
-        refreshToken,
+        token: refreshToken,
       });
     } catch (err) {
+      console.log(err);
       next(new HttpException(err.status, err.message));
     }
   };
 }
 
-export default BuyerAuthController;
+export default CustomerAuthController;

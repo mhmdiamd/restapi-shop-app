@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authCheck } from '../../utils/Middlewares/auth.middleware.js';
 import { isYourCredentials } from '../../utils/Middlewares/credentials.middleware.js';
-import { getNewToken } from './token.controller.js';
+import { getMyData, getNewToken, logout } from './token.controller.js';
 
 class TokenRouter {
   path = '/auth/refresh-token';
@@ -12,8 +12,13 @@ class TokenRouter {
   }
 
   #initialiseRouter() {
-    this.router.post(`${this.path}`, authCheck, isYourCredentials, getNewToken);
+    this.router.get(`${this.path}`, getNewToken);
 
+    // Logout Authenticate
+    this.router.post(`/auth/logout`, authCheck, logout);
+
+    // Get data me
+    this.router.get(`/me`, authCheck, getMyData);
   }
 }
 

@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { authCheck } from '../utils/Middlewares/auth.middleware.js';
 import CategoryController from './category.controller.js';
+import { multerStorage, useStorage } from './../../Config/multer.config.js';
 
 class CategoryRouter extends CategoryController {
   path = '/categories';
   router = Router();
+  upload = multerStorage(useStorage('Categories'));
 
   constructor() {
     super();

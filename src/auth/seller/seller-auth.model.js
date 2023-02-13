@@ -8,8 +8,8 @@ class SellerModel {
   #authRepository = dbRepo;
 
   // Auth Register
-  register = async ({ name, email, password }) => {
-    const query = `INSERT INTO sellers VALUES('${randomUUID()}', '${name}', '${email}', '${password}', DEFAULT, null, null, null, null, DEFAULT)`;
+  register = async ({ name, email, password, store_name, phone }) => {
+    const query = `INSERT INTO sellers(id, name, email, password, store_name, phone,  description, address, role, photo) VALUES('${randomUUID()}', '${name}', '${email}', '${password}','${store_name}', '${phone}', null, null,DEFAULT, DEFAULT)`;
     const userRegister = await this.#authRepository.query(query);
     return userRegister.rows;
   };
@@ -28,8 +28,8 @@ class SellerModel {
       throw new HttpException(401, 'Email or Password is invalid!');
     }
 
-    const { id, name, email, role } = findEmail.rows[0];
-    return { id, name, email, role };
+    const { id, name, role, store_name, photo } = findEmail.rows[0];
+    return { id, name, role, store_name, photo };
   };
 }
 

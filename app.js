@@ -9,11 +9,14 @@ import cluster from 'cluster';
 import os from 'os';
 import process from 'process';
 import path from 'path';
+import multer from 'multer';
 import { fileURLToPath } from 'url';
+import { config } from 'dotenv';
 
 class App {
   filename = fileURLToPath(import.meta.url);
   dirname = path.dirname(this.filename);
+  upload = multer();
 
   constructor(routers, port) {
     this.app = express();
@@ -28,15 +31,19 @@ class App {
   #initialiseMiddleware() {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
+    this.app.use(cors({ origin: process.env.ORIGIN_DOMAIN, credentials: true }));
+
     this.app.use(helmet());
     this.app.use(morgan('dev'));
     this.app.use(xss());
-    this.app.use(cors());
     this.app.use(cookieParser());
     // Static file for pruduct images
     this.app.use(process.env.PRODUCT_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Products')));
+    this.app.use(process.env.CATEGORY_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Categories')));
+    this.app.use(process.env.SELLER_PROFILE_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Profiles/Sellers')));
+    this.app.use(process.env.CUSTOMER_PROFILE_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Profiles/Customers')));
   }
-
+  z;
   #initialiseErrorHandling() {
     this.app.use(errorMiddleware);
     this.app.use((req, res, next) => {

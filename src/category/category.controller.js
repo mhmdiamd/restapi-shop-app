@@ -33,9 +33,25 @@ class CategoryController {
 
   // Created category
   createCategory = async (req, res, next) => {
-    const data = req.body;
+    // Get File
+    // const photo = req.file;
+
+    // if (!photo) {
+    //   return res.status(403).send({
+    //     status: 'failed',
+    //     message: 'Please input the photo',
+    //   });
+    // }
+
+    // // Create file name
+    // const photoUrl = `${process.env.HOST}${process.env.CATEGORY_UPLOAD_DIR}${photo.filename}`;
+    // console.log(process.env.HOST);
+    // // Get Id user login
+    // // merge data before send to model
+    // const data = { ...req.body, photo: photoUrl };
+    // console.log(data);
     try {
-      await this.#categoryModel.createCategory(data);
+      await this.#categoryModel.createCategory(req.body);
 
       // Success Response
       successResponse(res, 200, `Success create category!`, { message: 'Category Created!' });

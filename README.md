@@ -16,6 +16,10 @@ This API is server-side application for long project i creating when im in pijar
 | [Joi]           | npm i joi           |
 | [jsonwebtoken]  | npm i jsonwebtoken  |
 | [cookie-parser] | npm i cookie-parser |
+| [cloudinary]    | npm i cloudinary    |
+| [googleapis]    | npm i googleapis    |
+| [nodemailer]    | npm i nodemailer    |
+| [redisio]       | npm i redisio       |
 
 [express]: http://expressjs.com
 [nodemon]: https://www.npmjs.com/package/nodemon
@@ -27,6 +31,10 @@ This API is server-side application for long project i creating when im in pijar
 [joi]: https://www.npmjs.com/package/joi
 [jsonwebtoken]: https://www.npmjs.com/package/jsonwebtoken
 [cookie-parser]: https://www.npmjs.com/package/cookie-parser
+[cloudinary]: https://www.npmjs.com/package/cookie-parser
+[googleapis]: https://www.npmjs.com/package/cookie-parser
+[nodemailer]: https://www.npmjs.com/package/cookie-parser
+[redis]: https://www.npmjs.com/package/cookie-parser
 
 ## Installation
 

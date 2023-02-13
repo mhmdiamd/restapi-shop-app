@@ -2,14 +2,34 @@ import Joi from 'joi';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 
 // Register Schema validation
-export async function registerSchema(req, res, next) {
-  
+export async function customerRegisterSchema(req, res, next) {
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
       .required(),
     password: Joi.string().min(3).required(),
+  });
+
+  await schema
+    .validateAsync(req.body)
+    .then((res) => {
+      req.user = res;
+      next();
+    })
+    .catch((err) => next(new HttpException(err.status, err.message)));
+}
+
+// Register Schema validation
+export async function registerSchema(req, res, next) {
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+      .required(),
+    password: Joi.string().min(3).required(),
+    store_name: Joi.string().min(3).required(),
+    phone: Joi.string().min(10).required(),
   });
 
   await schema
