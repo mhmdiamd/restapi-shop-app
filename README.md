@@ -34,7 +34,7 @@ This API is server-side application for long project i creating when im in pijar
 [cloudinary]: https://www.npmjs.com/package/cookie-parser
 [googleapis]: https://www.npmjs.com/package/cookie-parser
 [nodemailer]: https://www.npmjs.com/package/cookie-parser
-[redis]: https://www.npmjs.com/package/cookie-parser
+[redisio]: https://www.npmjs.com/package/cookie-parser
 
 ## Installation
 
