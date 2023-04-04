@@ -147,9 +147,8 @@ class ProductModel {
 
   // Create Product
   createProduct = async (data) => {
-    console.log(randomUUID());
     const { product_name, price, color, size, stock, description, id_category, id_seller, photo, condition } = data;
-    const query = `INSERT INTO products VALUES('${randomUUID()}', '${product_name}', '${description}',
+    const query = `INSERT INTO products(id, product_name, description, price, color, size, stock, id_category, id_seller, photo, condition) VALUES('${randomUUID()}', '${product_name}', '${description}',
     ${Number(price)}, '${color}', '${size}',  ${Number(stock)}, '${id_category}', '${id_seller}', '${photo}','${condition}')`;
 
     const products = await this.#productRepository.query(query);
@@ -181,9 +180,8 @@ class ProductModel {
   updateProductById = async (id, data) => {
     const { product_name, price, color, size, stock, description, id_category, photo, condition } = data;
 
-    const query = `UPDATE products SET product_name='${product_name}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}',condition='${condition}', id_category=${id_category} ${
-      photo ? `, photo='${photo}'` : ''
-    } WHERE id = '${id}'`;
+    const query = `UPDATE products SET product_name='${product_name}', price=${price}, color='${color}', size='${size}', stock=${stock}, description='${description}',condition='${condition}', id_category=${id_category} ${photo ? `, photo='${photo}'` : ''
+      } WHERE id = '${id}'`;
 
     const updatedProduct = await this.#productRepository.query(query);
     // // Delete old Photo when photo was updated!

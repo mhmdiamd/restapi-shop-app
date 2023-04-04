@@ -42,12 +42,13 @@ class CustomerModel {
   updateCustomerById = async (id, data) => {
     await this.getCustomerById(id);
 
+    console.log(data)
     const { name, gender, phone, birth_date, address, photo } = data;
     const query = `UPDATE customers SET 
     name='${name}', 
     phone=${phone ? `'${phone}'` : null}, 
     birth_date=${`${birth_date}` || null}, 
-    gender=${`'${gender}'` || null}, 
+    gender=${`${gender == 'null' ? null : gender}`}, 
     address=${address ? address : null}, 
     photo='${photo}'
     WHERE id = '${id}'`;

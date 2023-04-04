@@ -22,7 +22,7 @@ export async function customerRegisterSchema(req, res, next) {
 
 // Register Schema validation
 export async function registerSchema(req, res, next) {
-  const schema = Joi.object({
+    const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string()
       .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })

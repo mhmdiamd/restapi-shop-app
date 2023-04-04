@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import CustomerController from './customer.controller.js';
+import { multerStorage, useStorage } from '../../Config/multer.config.js';
 
 class CustomerRouter extends CustomerController {
   path = '/customers';
   router = Router();
+  upload = multerStorage(useStorage())
 
   constructor() {
     // running Router
@@ -23,7 +25,7 @@ class CustomerRouter extends CustomerController {
     this.router.delete(`${this.path}/:id`, this.deleteCustomerById);
 
     // Update User Router
-    this.router.put(`${this.path}/:id`, this.updateCustomerById);
+    this.router.put(`${this.path}/:id`, this.upload.single('photo'), this.updateCustomerById);
   }
 }
 

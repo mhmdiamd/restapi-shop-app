@@ -18,7 +18,7 @@ class SellerAuthRouter extends SellerAuthController {
 
   #initialiseRouter() {
     // get all Route
-    this.router.post(`${this.path}/register`, this.upload.any(), registerSchema, this.register);
+    this.router.post(`${this.path}/register`, registerSchema, this.register);
 
     // get single category Route
     this.router.post(`${this.path}/login`, this.login);

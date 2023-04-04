@@ -1,6 +1,7 @@
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import CategoryModel from './category.model.js';
 import { successResponse } from './../utils/Helpers/response.js';
+import { auth, createAndUpload } from '../../Config/googleDrive.config.js';
 
 class CategoryController {
   #categoryModel = new CategoryModel();
@@ -34,24 +35,24 @@ class CategoryController {
   // Created category
   createCategory = async (req, res, next) => {
     // Get File
-    // const photo = req.file;
+    const photo = req.file;
 
-    // if (!photo) {
-    //   return res.status(403).send({
-    //     status: 'failed',
-    //     message: 'Please input the photo',
-    //   });
-    // }
+    if (!photo) {
+      return res.status(403).send({
+        status: 'failed',
+        message: 'Please input the photo',
+      });
+    }
 
-    // // Create file name
-    // const photoUrl = `${process.env.HOST}${process.env.CATEGORY_UPLOAD_DIR}${photo.filename}`;
-    // console.log(process.env.HOST);
-    // // Get Id user login
-    // // merge data before send to model
-    // const data = { ...req.body, photo: photoUrl };
-    // console.log(data);
     try {
-      await this.#categoryModel.createCategory(req.body);
+      
+      const uploadPhoto = await createAndUpload(auth, photo)
+      // Create file name
+      const photoUrl = `https://drive.google.com/uc?id=${uploadPhoto.id}`;
+      // Get Id user login
+      // merge data before send to model
+      const data = { ...req.body, photo: photoUrl };
+      await this.#categoryModel.createCategory(data);
 
       // Success Response
       successResponse(res, 200, `Success create category!`, { message: 'Category Created!' });

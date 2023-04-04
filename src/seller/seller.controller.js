@@ -1,3 +1,4 @@
+import { auth, createAndUpload, updatePhoto } from '../../Config/googleDrive.config.js';
 import { clearRedisCache, setOrGetCache } from '../../Config/redis.config.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
@@ -40,7 +41,7 @@ class SellerController {
     try {
       await this.#sellerModel.deleteSellerById(id);
       successResponse(res, 200, 'Seller success deleted!', { mesage: 'Seller deleted!' });
-      await clearRedisCache(`${this.ENDPOINT}/${id}`);
+      // await clearRedisCache(`${this.ENDPOINT}/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -51,14 +52,26 @@ class SellerController {
     const { id } = req.params;
     const photo = req.file;
     try {
-      // Create file name
-      const photoUrl = `${process.env.HOST}${process.env.SELLER_PROFILE_UPLOAD_DIR}${photo.filename}`;
-      const data = { ...req.body, photo: photoUrl };
-      // await clearRedisCache(`${this.ENDPOINT}/${id}`);
-      const seller = await this.#sellerModel.updateSellerById(id, data);
-      // await setOrGetCache(`${this.ENDPOINT}/${id}`, async () => {
-      //   return seller;
-      // });
+      let data
+      if(photo) {
+        const currentUser = await this.#sellerModel.getSellerById(id)
+        // Upload to Google Drive
+        let photoId = currentUser.photo
+        if(photoId == 'photodefault.jpg'){
+          const uploadPhoto = await createAndUpload(auth, photo);
+          // Create file name
+          const photoUrl = `https://drive.google.com/uc?id=${uploadPhoto.id}`;  
+          data = { ...req.body, photo: photoUrl };
+        }else {
+          photoId = currentUser.photo.split('=')[1]
+          await updatePhoto(auth, photo, photoId);
+          data = { ...req.body };
+        }  
+      }else {
+        data = { ...req.body };
+      }
+
+      await this.#sellerModel.updateSellerById(id, data);
       successResponse(res, 200, `Success updated seller with id ${id}`, { message: `Seller Updated!` });
     } catch (err) {
       next(new HttpException(err.status, err.message));

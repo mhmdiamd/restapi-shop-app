@@ -4,9 +4,9 @@ import HttpException from './../src/utils/Exceptions/http.exceptions.js';
 
 export const useStorage = (entity) => {
   return multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, `Public/Images/${entity}`);
-    },
+    // destination: (req, file, cb) => {
+    //   cb(null, `Public/Images/${entity}`);
+    // },
     filename: (req, file, cb) => {
       const imageName = new Date().getTime().toString();
       cb(null, file.fieldname + '-' + imageName + path.extname(file.originalname));

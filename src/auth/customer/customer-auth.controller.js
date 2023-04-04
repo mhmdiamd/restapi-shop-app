@@ -29,9 +29,10 @@ class CustomerAuthController {
       res.cookie('access_token', accessToken, {
         httpOnly: true,
         maxAge: (1 / 2) * 60 * 60 * 1000,
+        sameSite: 'none',
+        secure: 'false',
       });
 
-      await createRefreshToken(refreshToken);
       res.status(200).json({
         status: 'success',
         statusCode: 200,

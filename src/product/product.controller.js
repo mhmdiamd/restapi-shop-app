@@ -1,7 +1,7 @@
 import ProductModel from './product.model.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from './../utils/Helpers/response.js';
-import { updatePhoto } from '../../Config/googleDrive.config.js';
+import { auth, createAndUpload, updatePhoto } from '../../Config/googleDrive.config.js';
 import { deletePhotoCloudinary, uploadPhotoCloudinary } from '../../Config/cloudinary.config.js';
 
 class ProductController {
@@ -85,17 +85,17 @@ class ProductController {
       });
     }
 
-    // Upload to Google Drive
-    const uploadPhoto = await uploadPhotoCloudinary(photo.path);
-
-    // Create file name
-    const photoUrl = uploadPhoto.secure_url;
-    // Get Id user login
-    const { id, store_name } = req.user;
-    // merge data before send to model
-    const data = { ...req.body, id_seller: id, store_name, photo: photoUrl };
 
     try {
+      // Upload to Google Drive
+      const uploadPhoto = await createAndUpload(auth, photo);
+      // Create file name
+      const photoUrl = `https://drive.google.com/uc?id=${uploadPhoto.id}`;
+      // Get Id user login
+      const { id, store_name } = req.user;
+      // merge data before send to model
+      const data = { ...req.body, id_seller: id, store_name, photo: photoUrl };
+
       await this.#productModel.createProduct(data);
       // Success Response
       successResponse(res, 200, 'Success created Product!', { message: 'Product was created!' });
@@ -135,20 +135,17 @@ class ProductController {
 
         const uploadPhoto = await uploadPhotoCloudinary(photo.path);
         photoUrl = uploadPhoto.secure_url;
+
         if (updatePhoto) {
           const photoLength = oldProduct.photo.split('/').length;
           const idFile = oldProduct.photo.split('/')[photoLength - 1].split('.')[0];
           await deletePhotoCloudinary(idFile);
         }
+        
       }
 
       const data = { ...req.body, id_seller: id, photo: photoUrl };
-
-      // await clearRedisCache(`${this.#ENDPOINT}/${id}`);
-      // await setOrGetCache(`${this.#ENDPOINT}/${id}`, async () => {
       await this.#productModel.updateProductById(id, data);
-      // });
-
       successResponse(res, 200, `Success Update Product with ID ${id}`, { message: 'Product Updated' });
     } catch (err) {
       console.log(err);

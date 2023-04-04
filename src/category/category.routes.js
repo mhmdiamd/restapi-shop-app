@@ -19,9 +19,9 @@ class CategoryRouter extends CategoryController {
     // get single category Route
     this.router.get(`${this.path}/:id`, this.getCategoryById);
     // create Route
-    this.router.post(`${this.path}`, this.createCategory);
+    this.router.post(`${this.path}`, this.upload.single('photo'), this.createCategory);
     // Delete Route
-    this.router.delete(`${this.path}/:id`, this.deleteCategoryById);
+    this.router.delete(`${this.path}/:id`,this.deleteCategoryById);
   }
 }
 

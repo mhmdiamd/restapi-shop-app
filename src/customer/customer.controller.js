@@ -1,3 +1,4 @@
+import { createAndUpload, updatePhoto, auth } from '../../Config/googleDrive.config.js';
 import { clearRedisCache, setOrGetCache } from '../../Config/redis.config.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
@@ -21,10 +22,6 @@ class CustomerController {
   getCustomerById = async (req, res, next) => {
     const { id } = req.params;
     try {
-      // const customer = await setOrGetCache(`${this.#ENDPOINT}/${id}`, async () => {
-      //   return await this.#customerModel.getCustomerById(id);
-      // });
-
       const customer = await this.#customerModel.getCustomerById(id);
       successResponse(res, 200, `Get customer with ID ${id} success!`, customer);
     } catch (err) {
@@ -38,7 +35,6 @@ class CustomerController {
     try {
       await this.#customerModel.deleteCustomerById(id);
       successResponse(res, 200, `Delete customer with ID ${id} success!`, { message: 'Customer Deleted!' });
-      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
@@ -47,14 +43,28 @@ class CustomerController {
   // Update Customer By Id
   updateCustomerById = async (req, res, next) => {
     const { id } = req.params;
-    const data = req.body;
+    const photo = req.file
     try {
+      let data
+      if(photo) {
+        const currentUser = await this.#customerModel.getCustomerById(id)
+        // Upload to Google Drive
+        let photoId = currentUser.photo
+        if(photoId == 'photodefault.jpg'){
+          const uploadPhoto = await createAndUpload(auth, photo);
+          // Create file name
+          const photoUrl = `https://drive.google.com/uc?id=${uploadPhoto.id}`;  
+          data = { ...req.body, photo: photoUrl };
+        }else {
+          photoId = currentUser.photo.split('=')[1]
+          await updatePhoto(auth, photo, photoId);
+          data = { ...req.body };
+        }  
+      }else {
+        data = { ...req.body };
+      }
       const customer = await this.#customerModel.updateCustomerById(id, data);
-      await setOrGetCache(`${this.#ENDPOINT}/${id}`, async () => {
-        return customer;
-      });
       successResponse(res, 200, `Update customer with ID ${id} success!`, { message: 'Customer Updated!' });
-      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }

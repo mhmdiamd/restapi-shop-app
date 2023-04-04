@@ -31,7 +31,6 @@ class SellerAuthController {
         maxAge: (1 / 2) * 60 * 60 * 1000,
       });
 
-      await createRefreshToken(refreshToken);
       res.status(200).json({
         status: 'success',
         statusCode: 200,

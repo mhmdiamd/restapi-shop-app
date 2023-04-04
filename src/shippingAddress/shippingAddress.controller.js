@@ -45,7 +45,7 @@ class ShippingAddressController {
     try {
       await this.#shippingAddressModel.deleteShippingAddressById(id);
       successResponse(res, 200, `Delete Shipping Address with ID ${id} success!`, { message: 'Shipping Address Deleted!' });
-      await clearRedisCache(`${this.#ENDPOINT}/${id}`);
+      // await clearRedisCache(`${this.#ENDPOINT}/${id}`);
     } catch (err) {
       next(new HttpException(err.status, err.message));
     }
