@@ -42,7 +42,6 @@ class CustomerModel {
   updateCustomerById = async (id, data) => {
     await this.getCustomerById(id);
 
-    console.log(data)
     const { name, gender, phone, birth_date, address, photo } = data;
     const query = `UPDATE customers SET 
     name='${name}', 
