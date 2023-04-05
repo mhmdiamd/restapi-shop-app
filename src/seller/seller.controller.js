@@ -1,5 +1,4 @@
 import { auth, createAndUpload, updatePhoto } from '../../Config/googleDrive.config.js';
-import { clearRedisCache, setOrGetCache } from '../../Config/redis.config.js';
 import HttpException from '../utils/Exceptions/http.exceptions.js';
 import { successResponse } from '../utils/Helpers/response.js';
 import SellerModel from './seller.model.js';
