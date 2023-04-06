@@ -14,6 +14,6 @@ import OrderRouter from './src/order/order.routes.js';
 dotenv.config();
 process.setMaxListeners(0);
 
-const app = new App([new ProductRouter()], 3001);
-// , new CategoryRouter(), new AuthRouter(), new UserRouter(), new CustomerAuthRouter(), new CustomerRouter(), new CartRouter(), new TokenRouter(), new ShippingAddressRouter(), new OrderRouter()
+const app = new App([new ProductRouter(), new CategoryRouter(), new AuthRouter(), new UserRouter(), new CustomerAuthRouter(), new CustomerRouter(), new CartRouter(), new TokenRouter(), new ShippingAddressRouter(), new OrderRouter()], 3001);
+
 app.listen();
