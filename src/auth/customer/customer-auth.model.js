@@ -26,8 +26,8 @@ class CustomerModel {
     if (!isValidPassword) {
       throw new HttpException(401, 'Email or Password is invalid!');
     }
-    const { id, name, email, role } = findEmail.rows[0];
-    return { id, name, email, role };
+    const { id, name, email, role, photo } = findEmail.rows[0];
+    return { id, name, email, role, photo };
   };
 }
 
