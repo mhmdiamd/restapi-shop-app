@@ -1,6 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
+import xss from 'xss-clean';
 import errorMiddleware from './src/utils/Middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
@@ -38,12 +39,8 @@ class App {
 
     this.app.use(helmet());
     this.app.use(morgan('dev'));
-    this.app.use(cookieParser());
-    // Static file for pruduct images
-    this.app.use(process.env.PRODUCT_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Products')));
-    this.app.use(process.env.CATEGORY_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Categories')));
-    this.app.use(process.env.SELLER_PROFILE_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Profiles/Sellers')));
-    this.app.use(process.env.CUSTOMER_PROFILE_UPLOAD_DIR, express.static(path.join(this.dirname, 'Public/Images/Profiles/Customers')));
+    this.app.use(xss());
+    this.app.use(cookieParser());   
   }
   z;
   #initialiseErrorHandling() {
