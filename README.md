@@ -163,7 +163,8 @@ DRIVE_CLIENT_SECRET
 
 ## Endpoint List
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://documenter.getpostman.com/view/23292228/2s93RUvsMo)
+[![Run in Postman](https://run.pstmn.io/button.svg)]
+<!-- (https://documenter.getpostman.com/view/23292228/2s93RUvsMo) -->
 
 <!-- CONTRIBUTING -->
 
