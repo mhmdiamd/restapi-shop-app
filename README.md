@@ -70,10 +70,8 @@ This is an example of how to list things you need to use the software and how to
 | [Joi]           | npm i joi           |
 | [jsonwebtoken]  | npm i jsonwebtoken  |
 | [cookie-parser] | npm i cookie-parser |
-| [cloudinary]    | npm i cloudinary    |
 | [googleapis]    | npm i googleapis    |
 | [nodemailer]    | npm i nodemailer    |
-| [redisio]       | npm i redisio       |
 
 [express]: http://expressjs.com
 [nodemon]: https://www.npmjs.com/package/nodemon
@@ -85,10 +83,8 @@ This is an example of how to list things you need to use the software and how to
 [joi]: https://www.npmjs.com/package/joi
 [jsonwebtoken]: https://www.npmjs.com/package/jsonwebtoken
 [cookie-parser]: https://www.npmjs.com/package/cookie-parser
-[cloudinary]: https://www.npmjs.com/package/cookie-parser
 [googleapis]: https://www.npmjs.com/package/cookie-parser
 [nodemailer]: https://www.npmjs.com/package/cookie-parser
-[redisio]: https://www.npmjs.com/package/cookie-parser
 
 ### Requirements
 
