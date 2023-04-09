@@ -49,7 +49,7 @@ class CustomerModel {
     birth_date=${`${birth_date}` || null}, 
     gender=${`${gender == 'null' ? null : gender}`}, 
     address=${address ? address : null}, 
-    photo='${photo}'
+    ${photo ? `, photo='${photo}'` : ''}
     WHERE id = '${id}'`;
     const updatedCustomer = await this.#DB.query(query);
 

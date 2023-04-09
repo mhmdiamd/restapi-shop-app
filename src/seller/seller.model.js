@@ -43,7 +43,10 @@ class SellerModel {
     await this.getSellerById(id);
 
     const { name, description, phone, address, photo, store_name } = data;
-    const query = `UPDATE sellers SET name='${name}', phone='${phone}',  description=${description ? `'${description}'` : ''}, address='${address}',store_name='${store_name}', photo='${photo}' WHERE id = '${id}'`;
+    console.log(typeof photo)
+    const query = `UPDATE sellers SET name='${name}', phone='${phone}',  description=${description ? `'${description}'` : ''}, address='${address}',store_name='${store_name}' 
+    ${photo ? `, photo='${photo}'` : ''}
+    WHERE id = '${id}'`;
     const updatedUser = await this.#DB.query(query);
     console.log(updatedUser);
 

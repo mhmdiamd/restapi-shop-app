@@ -64,10 +64,10 @@ class SellerController {
         }else {
           photoId = currentUser.photo.split('=')[1]
           await updatePhoto(auth, photo, photoId);
-          data = { ...req.body };
+          data = req.body ;
         }  
       }else {
-        data = { ...req.body };
+        data = req.body
       }
 
       await this.#sellerModel.updateSellerById(id, data);
