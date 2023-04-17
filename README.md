@@ -188,7 +188,7 @@ Contributions are what make the open source community such an amazing place to b
 
 :rocket: [`Frontend Blanja`](https://github.com/mhmdiamd/ui-shop-app)
 
-:rocket: [`Demo Blanja`](https://ui-shop-app.vercel.app/)
+:rocket: [`Demo Blanja`](https://iam-blanja.vercel.app/)
 
 <!-- CONTACT -->
 
