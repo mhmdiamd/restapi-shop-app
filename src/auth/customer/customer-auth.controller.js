@@ -10,7 +10,7 @@ class CustomerAuthController {
 
   // User Register
   register = async (req, res, next) => {
-    sendEmailActivation(req.user, 'customers')
+    sendEmailActivation(req.user, 'customer')
       .then((response) => {
         successResponse(res, 200, 'Check your email for activation email!', {});
       })

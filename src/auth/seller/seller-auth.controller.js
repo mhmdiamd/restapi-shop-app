@@ -1,7 +1,6 @@
 import HttpException from '../../utils/Exceptions/http.exceptions.js';
 import SellerModel from './seller-auth.model.js';
 import { generateRefreshToken, generateToken } from '../token.js';
-import { createRefreshToken } from '../token/token.service.js';
 import { sendEmailActivation } from '../../../Config/nodemailer.config.js';
 import { successResponse } from '../../utils/Helpers/response.js';
 
@@ -10,7 +9,7 @@ class SellerAuthController {
 
   // User Register
   register = async (req, res, next) => {
-    sendEmailActivation(req.user, 'sellers')
+    sendEmailActivation(req.user, 'seller')
       .then((response) => {
         successResponse(res, 200, 'Check your email for activation email!', {});
       })

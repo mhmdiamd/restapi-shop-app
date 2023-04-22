@@ -21,7 +21,7 @@ export const sendEmailActivation = (userLogin, role) => {
       from: process.env.EMAIL_SENDER, // sender address
       to: userLogin.email, // list of receivers
       subject: 'Email Activation!', // Subject line
-      html: `<p>http://${process.env.HOST}/api/v1/${role}/verification/${token}</p>`,
+      html: `<p>${process.env.ORIGIN_DOMAIN}/email-activation?token=${token}&role=${role}</p>`,
     };
 
     transporter.sendMail(details, (err) => {
